@@ -13,6 +13,7 @@ $(document).ready(function() {
         box.addEventListener('dragleave', dragLeave);
         box.addEventListener('drop', drop);
     });
+
 })
 
 $('#scan').click(function() {
@@ -21,6 +22,21 @@ $('#scan').click(function() {
 $('#add').click(function() {
     actionAdd();
 });
+
+function run_command(element){
+    // console.log(element)
+    $.post({
+        url: '/run_command',
+        data: JSON.stringify({"command": element.textContent}),
+        contentType: 'application/json',
+        success: function(data) {
+            console.log(data['message'])
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseJSON['message'])
+        },
+    });
+}
 
 
 function actionScan() {
@@ -59,11 +75,6 @@ function actionAdd() {
 
     cp_box += 1
 }
-
-
-
-
-
 
 
 
