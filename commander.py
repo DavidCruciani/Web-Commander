@@ -26,7 +26,7 @@ def run_command_core(command, term_num):
     subprocess.call(command_base)
 
 def delete_command_core(command):
-    red.srem("command", command)
+    return red.srem("command", command)
 
 def get_command_core():
     command_list = list()
@@ -44,12 +44,12 @@ def index():
     return render_template("index.html", command_list=command_list)
 
 
-@app.route("/form_valid", methods=['POST'])
-def form_valid():
+@app.route("/add_command", methods=['POST'])
+def add_command():
     """Form valid page"""
 
     command_name = request.json['command']
-    red.sadd("command", command_name)
+    red.sadd("command", command_name.rstrip())
 
     return jsonify({"message": "Command add"}), 201
 
@@ -59,9 +59,10 @@ def delete_command():
     """Delete command page"""
 
     command = request.json["command"]
-    delete_command_core(command)
-
-    return jsonify({"message": "Command delete"}), 201
+    if delete_command_core(command):
+        return jsonify({"message": "Command delete"}), 201
+    else:
+        return jsonify({"message": "Command not delete. Something get wrong"}), 400
 
 
 @app.route("/get_command", methods=['GET'])

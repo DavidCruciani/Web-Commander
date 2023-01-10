@@ -10,10 +10,14 @@ function run_command(element){
         data: JSON.stringify({"command": element.textContent, "terminal": $('#tnum').val()}),
         contentType: 'application/json',
         success: function(data) {
-            console.log(data['message'])
+            $('#status').empty()
+            $('#status').css("color", "green")
+            $('#status').text(data['message'])
         },
         error: function(xhr, status, error) {
-            console.error(xhr.responseJSON['message'])
+            $('#status').empty()
+            $('#status').css("color", "brown")
+            $('#status').text(xhr.responseJSON['message'])
         },
     });
 }
@@ -26,11 +30,15 @@ function delete_command(element){
         data: JSON.stringify({"command": element.parentElement.parentElement.firstElementChild.outerText}),
         contentType: 'application/json',
         success: function(data) {
-            console.log(data['message'])
+            $('#status').empty()
+            $('#status').css("color", "green")
+            $('#status').text(data['message'])
             get_command()
         },
         error: function(xhr, status, error) {
-            console.error(xhr.responseJSON['message'])
+            $('#status').empty()
+            $('#status').css("color", "brown")
+            $('#status').text(xhr.responseJSON['message'])
         },
     });
 }
@@ -61,15 +69,19 @@ function get_command(){
 
 function action_add(){
     $.post({
-        url: '/form_valid',
+        url: '/add_command',
         data: JSON.stringify({"command": $('#Cname').val()}),
         contentType: 'application/json',
         success: function(data) {
-            console.log(data['message'])
+            $('#status').empty()
+            $('#status').css("color", "green")
+            $('#status').text(data['message'])
             get_command()
         },
         error: function(xhr, status, error) {
-            console.error(xhr.responseJSON['message'])
+            $('#status').empty()
+            $('#status').css("color", "brown")
+            $('#status').text(xhr.responseJSON['message'])
         },
     });
 }
