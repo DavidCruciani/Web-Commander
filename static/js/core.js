@@ -7,7 +7,7 @@ $(document).ready(function() {
 function run_command(element){
     $.post({
         url: '/run_command',
-        data: JSON.stringify({"command": element.textContent}),
+        data: JSON.stringify({"command": element.textContent, "terminal": $('#tnum').val()}),
         contentType: 'application/json',
         success: function(data) {
             console.log(data['message'])

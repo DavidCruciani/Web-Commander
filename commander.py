@@ -16,10 +16,10 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 
 
-def run_command_core(command):
+def run_command_core(command, term_num):
     # sudo chown root:root ttyecho && sudo chmod u+s ttyecho
 
-    command_base = ['sudo', './ttyecho', '-n', f"/dev/pts/3"]
+    command_base = ['sudo', './ttyecho', '-n', f"/dev/pts/{term_num}"]
     command_base.append(command)
 
     subprocess.call(command_base)
@@ -77,7 +77,8 @@ def run_command():
     """Run command page"""
 
     command = request.json["command"]
-    run_command_core(command)
+    term_num = request.json["terminal"]
+    run_command_core(command, term_num)
 
     return jsonify({"message": "Command run"}), 201
 
