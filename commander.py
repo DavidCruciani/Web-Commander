@@ -1,5 +1,6 @@
 import redis
 import subprocess
+import datetime
 
 from flask import Flask, render_template, url_for, request, jsonify
 
@@ -78,6 +79,15 @@ def run_command():
 
     command = request.json["command"]
     term_num = request.json["terminal"]
+
+    if not red.sismember("command", command):
+        return jsonify({"message": "Command Not in db"}), 400
+    
+    try:
+        int(term_num)
+    except:
+        return jsonify({"message": "Terminal number not valid"}), 400
+
     run_command_core(command, term_num)
 
     return jsonify({"message": "Command run"}), 201

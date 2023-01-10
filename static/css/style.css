@@ -1,6 +1,6 @@
 * {
     margin: 0;
-    padding: 0;
+    padding: 10px;
     box-sizing: border-box;
 }
 
@@ -63,3 +63,8 @@ h1 {
 .hide {
     display: none;
 }
+
+#terminal{
+    position: fixed;
+    right: 15em;
+ }

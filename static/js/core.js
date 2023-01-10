@@ -44,7 +44,7 @@ function get_command(){
             $('<th>').text("")
         ).appendTo('#data')
         $.each(data, function(i, item) {
-            for(j in item){
+            for(j in item.sort()){
                 $('<tr>').append(
                     $('<td>').append(
                         $('<button>').attr("onclick", "run_command(this)").text(item[j])

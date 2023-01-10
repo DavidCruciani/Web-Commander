@@ -13,19 +13,22 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" style="padding: 10px;">
         <h1>JavaScript - Drag and Drop</h1>
 
         <input type="hidden" id="sid">
         <label for="fname">Command Name:</label>
         <input type="text" id="Cname" name="fname">
 
-        <label for="tnum">Terminal Number:</label>
-        <input type="text" id="tnum" name="tnum" value="3">
+        
 
         <button type="submit" onclick="action_add()">Submit</button>
 
         <table id="data"> </table>
+        <span id="terminal">
+            <label for="tnum">Terminal id:</label>
+            <input type="text" id="tnum" name="tnum" placeholder="3" size="2">
+        </span>
     </div>
     
     <script src="{{ url_for('static',filename='js/core.js') }}"></script>
