@@ -15,42 +15,13 @@
 <body>
     <div class="container">
         <h1>JavaScript - Drag and Drop</h1>
-        <form action="form_valid" method="post">
-            <input type="hidden" id="sid">
-            <label for="fname">Command Name:</label>
-            <input type="text" id="Cname" name="fname">
-            <button type="submit">Submit</button>
-        </form>
-        <!-- <div class="drop-targets">
-            <div>
-                command
-            </div>
-            <div class="box" id="box1"></div>
-            <div class="box" id="box2"></div>
-        </div>
-        <button id="scan">Search</button>
-        <button id="add">Add</button>
-        <table>
-            <tr>
-                <td>
-                    <div class="box">
-                        <div class="item" id="item" draggable="true">Text</div>
-                    </div>
-                </td>
-            </tr>
-        </table> -->
-        <table id="data">
-            <tr>
-                <th>COMMAND</th>
-                <th>LAST RUN</th>
-            </tr>
-            {% for i in command_list%}
-                <tr>
-                    <td> <button onclick="run_command(this)">{{i}}</button></td>
-                    <td></td>
-                </tr>
-            {%endfor%}
-        </table>
+
+        <input type="hidden" id="sid">
+        <label for="fname">Command Name:</label>
+        <input type="text" id="Cname" name="fname">
+        <button type="submit" onclick="action_add()">Submit</button>
+
+        <table id="data"> </table>
     </div>
     
     <script src="{{ url_for('static',filename='js/core.js') }}"></script>

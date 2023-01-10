@@ -1,36 +1,72 @@
-cp_box = 3
 
 $(document).ready(function() {
-    const item = document.querySelector('.item');
-    item.addEventListener('dragstart', dragStart);
-
-    /* drop targets */
-    const boxes = document.querySelectorAll('.box');
-
-    boxes.forEach(box => {
-        box.addEventListener('dragenter', dragEnter)
-        box.addEventListener('dragover', dragOver);
-        box.addEventListener('dragleave', dragLeave);
-        box.addEventListener('drop', drop);
-    });
-
+    get_command()
 })
 
-$('#scan').click(function() {
-    actionScan();
-});
-$('#add').click(function() {
-    actionAdd();
-});
 
 function run_command(element){
-    // console.log(element)
     $.post({
         url: '/run_command',
         data: JSON.stringify({"command": element.textContent}),
         contentType: 'application/json',
         success: function(data) {
             console.log(data['message'])
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseJSON['message'])
+        },
+    });
+}
+
+function delete_command(element){
+    // console.log(element)
+    // console.log(element.parentElement.parentElement.firstElementChild)
+    $.post({
+        url: '/delete_command',
+        data: JSON.stringify({"command": element.parentElement.parentElement.firstElementChild.outerText}),
+        contentType: 'application/json',
+        success: function(data) {
+            console.log(data['message'])
+            get_command()
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseJSON['message'])
+        },
+    });
+}
+
+function get_command(){
+    $.getJSON('/get_command', function(data) {
+        $('#data').empty()
+        $('<tr>').append(
+            $('<th>').text("COMMAND"),
+            $('<th>').text("LAST RUN"),
+            $('<th>').text("")
+        ).appendTo('#data')
+        $.each(data, function(i, item) {
+            for(j in item){
+                $('<tr>').append(
+                    $('<td>').append(
+                        $('<button>').attr("onclick", "run_command(this)").text(item[j])
+                    ),
+                    $('<td>'),
+                    $('<td>').append(
+                        $('<button>').attr("onclick", "delete_command(this)").text("Remove")
+                    )
+                ).appendTo("#data")
+            }
+        })
+    })
+}
+
+function action_add(){
+    $.post({
+        url: '/form_valid',
+        data: JSON.stringify({"command": $('#Cname').val()}),
+        contentType: 'application/json',
+        success: function(data) {
+            console.log(data['message'])
+            get_command()
         },
         error: function(xhr, status, error) {
             console.error(xhr.responseJSON['message'])
@@ -57,59 +93,5 @@ function actionScan() {
             $('<td>').text(text)
         ).appendTo("#data")
     }
-
-    
 }
 
-function actionAdd() {
-    $('.drop-targets').append(
-        $("<div>").attr({"class": "box", "id": "box" + cp_box})
-    )
-
-    const item = document.querySelector("#box" + cp_box);
-
-    item.addEventListener('dragenter', dragEnter);
-    item.addEventListener('dragover', dragOver);
-    item.addEventListener('dragleave', dragLeave);
-    item.addEventListener('drop', drop);
-
-    cp_box += 1
-}
-
-
-
-
-// Drag Function
-function dragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.id);
-    setTimeout(() => {
-        e.target.classList.add('hide');
-    }, 0);
-}
-
-function dragEnter(e) {
-    e.preventDefault();
-    e.target.classList.add('drag-over');
-}
-function dragOver(e) {
-    e.preventDefault();
-    e.target.classList.add('drag-over');
-}
-
-function dragLeave(e) {
-    e.target.classList.remove('drag-over');
-}
-
-function drop(e) {
-    e.target.classList.remove('drag-over');
-
-    // get the draggable element
-    const id = e.dataTransfer.getData('text/plain');
-    const draggable = document.getElementById(id);
-
-    // add it to the drop target
-    e.target.appendChild(draggable);
-
-    // display the draggable element
-    draggable.classList.remove('hide');
-}
