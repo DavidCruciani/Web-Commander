@@ -17,10 +17,13 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 
 
-def run_command_core(command, term_num):
+def run_command_core(command, term_num, flag):
     # sudo chown root:root ttyecho && sudo chmod u+s ttyecho
 
-    command_base = ['sudo', './ttyecho', '-n', f"/dev/pts/{term_num}"]
+    if flag:
+        command_base = ['sudo', './ttyecho', f"/dev/pts/{term_num}"]
+    else:
+        command_base = ['sudo', './ttyecho', '-n', f"/dev/pts/{term_num}"]
     command_base.append(command)
 
     subprocess.call(command_base)
@@ -80,6 +83,7 @@ def run_command():
 
     command = request.json["command"]
     term_num = request.json["terminal"]
+    flag = request.json["flag"]
 
     if not red.sismember("command", command):
         return jsonify({"message": "Command Not in db"}), 400
@@ -89,7 +93,7 @@ def run_command():
     except:
         return jsonify({"message": "Terminal number not valid"}), 400
 
-    run_command_core(command, term_num)
+    run_command_core(command, term_num, flag)
 
     return jsonify({"message": "Command run"}), 201
 

@@ -4,10 +4,14 @@ $(document).ready(function() {
 })
 
 
-function run_command(element){
+function run_command(element, flag){
+    if(flag)
+        data = {"command": element.parentElement.parentElement.firstElementChild.firstElementChild.outerText, "terminal": $('#tnum').val(), "flag": flag}
+    else
+        data = {"command": element.textContent, "terminal": $('#tnum').val(), "flag": flag}
     $.post({
         url: '/run_command',
-        data: JSON.stringify({"command": element.textContent, "terminal": $('#tnum').val()}),
+        data: JSON.stringify(data),
         contentType: 'application/json',
         success: function(data) {
             $('#status').empty()
@@ -55,7 +59,8 @@ function get_command(){
             for(j in item.sort()){
                 $('<tr>').append(
                     $('<td>').append(
-                        $('<button>').attr("onclick", "run_command(this)").text(item[j])
+                        $('<button>').attr("onclick", "run_command(this, false)").text(item[j]),
+                        $('<button>').attr("onclick", "run_command(this, true)").text("Copy to Terminal")
                     ),
                     $('<td>'),
                     $('<td>').append(
