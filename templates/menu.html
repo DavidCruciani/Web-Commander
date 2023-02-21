@@ -1,0 +1,33 @@
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	<!-- Container wrapper -->
+	<div class="container-fluid">
+		<a href="/" class="nav-link active" aria-current="page" style="color:black;">Web-Commander</a>
+	  <!-- Collapsible wrapper -->
+	  <div
+		class="collapse navbar-collapse justify-content-center" id="navbarCenteredExample">
+		<!-- Left links -->
+		<ul class="navbar-nav mb-2 mb-lg-0">
+		  <li class="nav-item">
+			<a class="nav-link active" aria-current="page" href="/">All Command</a>
+		  </li>
+		  <!-- Navbar dropdown -->
+		  <li class="nav-item dropdown" onclick="display_cat()">
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			  Category
+			</a>
+			<div class="dropdown-menu" aria-labelledby="navbarDropdown" id="dropdown_cat"></div>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link active" aria-current="page" href="/category">Add Category</a>
+		  </li>
+		</ul>
+		<!-- Left links -->
+		<div class="form-outline">
+        	<input  class="form-control mr-sm-2" id="searchbar" type="search" placeholder="Search" aria-label="Search">
+		</div>
+	  </div>
+	  <!-- Collapsible wrapper -->
+	</div>
+	<!-- Container wrapper -->
+</nav>

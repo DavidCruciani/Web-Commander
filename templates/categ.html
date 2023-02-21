@@ -16,42 +16,23 @@
 
 <body>
     <div id="divh1">
-        {% if(not cat_name) %}
-            <h1>All Command</h1>
-        {%else%}
-            <h1>{{cat_name}}</h1>
-        {%endif%}
+        <h1>Add Category</h1>
     </div>
     
     <div class="divmain">
         <table style="margin-bottom: 0.5em;">
             <tr>
-                <td style="padding-right: 1em;"><label for="fname">Command Name:</label></td>
+                <td style="padding-right: 1em;"><label for="fname">Category Name:</label></td>
                 <td><input type="text" id="Cname" name="fname"></td>
-            </tr>
-            <tr>
-                <td><label for="cat-select">Category:</label></td>
-                <td>
-                    <select name="pets" id="cat-select">
-                        <option value="0">No Category</option>
-                        {% for i in range(0, len_cat)%}
-                            <option value="{{categ_list[i][0]}}">{{categ_list[i][1]}}</option>
-                        {%endfor%}
-                    </select>
-                </td>
             </tr>
         </table>
         <button type="submit" onclick="action_add()">Add</button>
 
         <table id="data"></table>
 
-        <span id="terminal">
-            <label for="tnum">Terminal id:</label>
-            <input type="text" id="tnum" name="tnum" size="2">
-        </span>
     </div>
     
-    <script src="{{ url_for('static',filename='js/core.js') }}"></script>
+    <script src="{{ url_for('static',filename='js/add_categ.js') }}"></script>
 </body>
 
 </html>

@@ -1,10 +1,11 @@
-import redis
-import subprocess
-import datetime
+from commander_core import *
 
 from flask import Flask, render_template, url_for, request, jsonify
 
-red = redis.Redis(host='localhost', port=6379, db=8)
+import sqlite3
+
+cur = sqlite3.connect('webcommander.db',check_same_thread=False)
+
 
 FLASK_URL = '127.0.0.1'
 FLASK_PORT = 7050
@@ -15,46 +16,49 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
 
 
-
-
-def run_command_core(command, term_num, flag):
-    # sudo chown root:root ttyecho && sudo chmod u+s ttyecho
-
-    if flag:
-        command_base = ['sudo', './ttyecho', f"/dev/pts/{term_num}"]
-    else:
-        command_base = ['sudo', './ttyecho', '-n', f"/dev/pts/{term_num}"]
-    command_base.append(command)
-
-    subprocess.call(command_base)
-
-def delete_command_core(command):
-    return red.srem("command", command)
-
-def get_command_core():
-    command_list = list()
-    for c in red.smembers("command"):
-        command_list.append(c.decode())
-
-    return command_list
-
-
 @app.route("/")
 def index():
     """Home page"""
 
-    command_list = get_command_core()
-    return render_template("index.html", command_list=command_list)
+    categ_list = get_categ_core()
+    return render_template("index.html", categ_list=categ_list, len_cat=len(categ_list), cat_name="")
+
+@app.route("/categ_list", methods=['GET'])
+def categ():
+    """"""
+
+    data_dict = dict(request.args)
+    categ_list = get_categ_core()
+    cat_name = get_cat_by_id(data_dict["cat"])
+    return render_template("index.html", categ_list=categ_list, len_cat=len(categ_list), cat_name=cat_name)
+
+@app.route("/category")
+def category():
+    """Add Category page"""
+
+    categ_list = get_categ_core()
+
+    return render_template("categ.html", categ_list=categ_list, len_cat=len(categ_list))
+
 
 
 @app.route("/add_command", methods=['POST'])
 def add_command():
     """Form valid page"""
 
-    command_name = request.json['command']
-    red.sadd("command", command_name.rstrip())
+    response_json = request.json
+    add_command_core(response_json['command'], response_json['category'])
 
     return jsonify({"message": "Command add"}), 201
+
+@app.route("/add_category", methods=['POST'])
+def add_category():
+    """Add Category page"""
+
+    response_json = request.json
+    add_category_core(response_json['category'])
+
+    return jsonify({"message": "Category add"}), 201
 
 
 @app.route("/delete_command", methods=['POST'])
@@ -67,14 +71,67 @@ def delete_command():
     else:
         return jsonify({"message": "Command not delete. Something get wrong"}), 400
 
+@app.route("/delete_category", methods=['POST'])
+def delete_category():
+    """Delete category form"""
+
+    category = request.json["category"]
+    if delete_category_core(category):
+        return jsonify({"message": "Category delete"}), 201
+    else:
+        return jsonify({"message": "Category not delete. Something get wrong"}), 400
+
 
 @app.route("/get_command", methods=['GET'])
 def get_command():
     """Get command page"""
 
-    command_list = get_command_core()
+    data_dict = dict(request.args)
+
+    command_list = get_command_core(data_dict)
 
     return jsonify({"command_list": command_list}), 201
+
+@app.route("/get_category")
+def get_category():
+    """Get category page"""
+
+    category_list = get_category_core()
+
+    return jsonify({"category_list": category_list}), 201
+
+
+@app.route("/get_category_list")
+def get_category_list():
+    """Get category page"""
+
+    category_list = get_categ_core()
+
+    return jsonify({"category_list": category_list}), 201
+
+
+@app.route("/get_note", methods=['GET'])
+def get_note():
+    """Get category page"""
+
+    data_dict = dict(request.args)
+
+    note = get_notes_core(data_dict["id"])
+
+    return jsonify({"note": note}), 201
+
+
+@app.route("/save_note", methods=['POST'])
+def save_note():
+    """Get category page"""
+
+    note = request.json["note"]
+    id = request.json["id_note"]
+    
+    if save_note_core(id, note):
+        return jsonify({"message": "Note Updated"}), 201
+    else:
+        return jsonify({"message": "Note not updated. Something get wrong"}), 400
 
 
 @app.route("/run_command", methods=['POST'])
@@ -85,7 +142,9 @@ def run_command():
     term_num = request.json["terminal"]
     flag = request.json["flag"]
 
-    if not red.sismember("command", command):
+    cur.execute("SELECT id FROM Command WHERE name=?", (command,))
+
+    if not cur:
         return jsonify({"message": "Command Not in db"}), 400
     
     try:
@@ -96,7 +155,6 @@ def run_command():
     run_command_core(command, term_num, flag)
 
     return jsonify({"message": "Command run"}), 201
-
 
 if __name__ == "__main__":
     app.run(host=FLASK_URL, port=FLASK_PORT)

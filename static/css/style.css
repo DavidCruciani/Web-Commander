@@ -1,7 +1,6 @@
-* {
-    margin: 0;
-    padding: 10px;
-    box-sizing: border-box;
+html {
+    overflow-y: scroll;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -15,56 +14,28 @@ h1 {
     color: #323330;
 }
 
-.container {
-    height: 100vh;
+.divmain {
+    /* height: 80vh; */
+    margin-top: 4em;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 20px;
-
+    /* margin: 20px; */
 }
-
-.drop-targets {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
-
-    margin: 20px 0;
-}
-
-.box {
-    height: 50px;
-    width: 150px;
-    border: solid 3px #ccc;
-    margin: 10px;
-
-    /* align items in the box */
+#divh1 {
+    margin-top: 13em;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
-
-}
-
-
-.drag-over {
-    border: dashed 3px red;
-}
-
-.item {
-    height: 75px;
-    width: 75px;
-    background-color: #F0DB4F;
-
-}
-
-.hide {
-    display: none;
+    align-items: center;
 }
 
 #terminal{
     position: fixed;
     right: 15em;
- }
+}
+
+#data{
+    margin-top: 2em;
+}
