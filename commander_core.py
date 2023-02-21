@@ -38,13 +38,20 @@ def delete_command_core(command):
 
 def add_command_core(command, category):
     cursor = cur.execute("SELECT id FROM Command WHERE name=?", (command.rstrip(),))
-    if not cursor:
+    cp = 0
+    for id in cursor:
+        cp +=1
+
+    if cp==0:
         try: 
             cur.execute("INSERT INTO Command (name,id_cat) VALUES (?,?)", (command.rstrip(),category))
             cur.commit()
             # conn.commit()
+            return "Command Added", 201
         except Exception as e: 
-            print(f"Error: {e}")
+            return f"Error: {e}", 400
+    else:
+        return "Command already exist", 400
 
 
 def add_category_core(category):
@@ -56,10 +63,13 @@ def add_category_core(category):
         print(f"Error: {e}")
 
 def delete_command_core(command):
+    cursor = cur.execute("SELECT id_note FROM Command WHERE name=(?)", (command,))
+    for c in cursor:
+        id_note = c[0]
     try:
         cur.execute("DELETE FROM Command WHERE name=?", (command,))
+        cur.execute("DELETE FROM Notes WHERE id=?", (id_note,))
         cur.commit()
-        # conn.commit()
         return True
     except Exception as e: 
         print(f"Error: {e}")
@@ -111,15 +121,36 @@ def get_command_core(cat = dict()):
     return command_list
 
 def get_notes_core(id_note):
-    notes_list = ""
+    note = ""
     cursor = cur.execute("SELECT note FROM Notes WHERE id=(?)", (str(id_note),))
     for c in cursor:
-        notes_list = c
-    return notes_list[0]
+        note = c
+    if note:
+        return note[0]
+    else:
+        return ""
 
 def save_note_core(id, note):
     try:
         cur.execute("UPDATE Notes set note=? WHERE id=?", (note,id))
+        cur.commit()
+        return True
+    except Exception as e: 
+        print(f"Error: {e}")
+    return False
+
+def create_note_core(name_command, note):
+    cursor = cur.execute("SELECT id FROM Command WHERE name=(?)", (name_command,))
+    for c in cursor:
+        id_command = c[0]
+    try:
+        cur.execute("INSERT INTO Notes (note, id_com) VALUES (?,?)", (note,id_command))
+
+        cursor = cur.execute("SELECT id FROM Notes WHERE id_com=(?)", (id_command,))
+        for c in cursor:
+            id_note = c[0]
+
+        cur.execute("UPDATE Command set id_note=? WHERE id=?", (id_note,id_command))
         cur.commit()
         return True
     except Exception as e: 

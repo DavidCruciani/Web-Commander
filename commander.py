@@ -42,14 +42,26 @@ def category():
 
 
 
+@app.route("/create_note", methods=['POST'])
+def create_note():
+    """Form valid page"""
+
+    note = request.json["note"]
+    name_command = request.json["name_command"]
+    
+    if create_note_core(name_command, note):
+        return jsonify({"message": "Note Created"}), 201
+    else:
+        return jsonify({"message": "Note not created. Something get wrong"}), 400
+
 @app.route("/add_command", methods=['POST'])
 def add_command():
     """Form valid page"""
 
     response_json = request.json
-    add_command_core(response_json['command'], response_json['category'])
+    msg, code = add_command_core(response_json['command'], response_json['category'])
 
-    return jsonify({"message": "Command add"}), 201
+    return jsonify({"message": msg}), code
 
 @app.route("/add_category", methods=['POST'])
 def add_category():

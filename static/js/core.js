@@ -36,10 +36,10 @@ function run_command(element, flag){
 
 function delete_command(element){
     // console.log(element)
-    // console.log(element.parentElement.parentElement.firstElementChild.firstElementChild)
+    // console.log(element.parentElement.parentElement.cells[1].firstElementChild)
     $.post({
         url: '/delete_command',
-        data: JSON.stringify({"command": element.parentElement.parentElement.firstElementChild.firstElementChild.outerText}),
+        data: JSON.stringify({"command": element.parentElement.parentElement.cells[1].firstElementChild.outerText}),
         contentType: 'application/json',
         success: function(data) {
             $('#status').empty()
@@ -104,21 +104,40 @@ function get_command(flag = -1){
                     ),
                     
                 ).appendTo("#data")
-                $('<tr>').append(
-                    $('<td>').attr({"colspan": "4"}).append(
-                        spe_div.append(
-                            $('<div>').attr({"class": "card card-body", "id": "divNote"+item[j][2][0]}).append(
-                                $('<span>').append($('<button>').attr({"onclick": "edit_note(this)", "type": "button", "class": "btn btn-primary", "id": "note_"+item[j][2][0]}).text("edit")).css(
-                                    {
-                                        "right": "1em",
-                                        "position": "relative"
-                                    }
-                                ),
-                                item[j][2][1]
+
+                if (item[j][2][1]){
+                    $('<tr>').append(
+                        $('<td>').attr({"colspan": "4"}).append(
+                            spe_div.append(
+                                $('<div>').attr({"class": "card card-body", "id": "divNote"+item[j][2][0]}).append(
+                                    $('<span>').append(
+                                        $('<button>').attr({"onclick": "edit_note(this)", "type": "button", "class": "btn btn-primary", "id": "note_"+item[j][2][0]}).append(
+                                            $('<div>').attr({"hidden":""}).text(item[j][0]),
+                                            "Edit"
+                                        ),
+                                    ).css({"right": "1em", "position": "relative"}),
+                                    item[j][2][1]
+                                )
                             )
                         )
-                    )
-                ).appendTo("#data")
+                    ).appendTo("#data")
+                }else{
+                    $('<tr>').append(
+                        $('<td>').attr({"colspan": "4"}).append(
+                            spe_div.append(
+                                $('<div>').attr({"class": "card card-body", "id": "divNote"+item[j][2][0]}).append(
+                                    $('<span>').append(
+                                        $('<button>').attr({"onclick": "create_note(this)", "type": "button", "class": "btn btn-primary", "id": "note_"+item[j][2][0]}).append(
+                                            $('<div>').attr({"hidden":""}).text(item[j][0]),
+                                            "Create"
+                                        ),
+                                    ).css({"right": "1em", "position": "relative"}),                                    
+                                    $('<textarea>').attr({"id": "note_area", "rows": "5", "cols": "50", "maxlength": "5000"})
+                                )
+                            )
+                        )
+                    ).appendTo("#data")
+                }
                 cp += 1
             }
             
@@ -150,10 +169,30 @@ function edit_note(element){
 }
 
 function save_note(element){
-    console.log(element.parentElement.parentElement.parentElement.id.split("_")[1])
+    // console.log(element.parentElement.parentElement.parentElement.id.split("_")[1])
     $.post({
         url: '/save_note',
         data: JSON.stringify({"id_note": element.id.split("_")[1], "note": $('#note_area').val()}),
+        contentType: 'application/json',
+        success: function(data) {
+            $('#status').empty()
+            $('#status').css("color", "green")
+            $('#status').text(data['message'])
+            get_command(element.parentElement.parentElement.parentElement.id.split("_")[1])
+        },
+        error: function(xhr, status, error) {
+            $('#status').empty()
+            $('#status').css("color", "brown")
+            $('#status').text(xhr.responseJSON['message'])
+        },
+    });
+}
+
+function create_note(element){
+    // console.log(element.firstElementChild.outerText)
+    $.post({
+        url: '/create_note',
+        data: JSON.stringify({"name_command": element.firstElementChild.outerText, "note": $('#note_area').val()}),
         contentType: 'application/json',
         success: function(data) {
             $('#status').empty()
