@@ -1,0 +1,144 @@
+<!-- 
+    Author: David Cruciani
+-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <h1>Documentation</h1>
+    <hr>
+
+    <br>
+    <div class="form-floating w-50 mb-3">
+        <input v-if="current_doc" class="form-control" id="input-title" :value="current_doc.title" type="text"/>
+        <input v-else class="form-control" id="input-title" type="text"/>
+        <label>Title</label>
+    </div>
+    <div id="error-input-title" style="color: brown;"></div>
+
+    <div class="form-floating w-50 mb-3">
+        <textarea v-if="current_doc" class="form-control" id="textarea-description" :value="current_doc.description"></textarea>
+        <textarea v-else class="form-control" id="textarea-description"></textarea>
+        <label>Description (optional)</label>
+    </div>
+    <hr>
+
+    <div>
+        <textarea id="my-text-area"></textarea>
+    </div>
+  
+    <button class="btn btn-primary" @click="submit()">Submit</button>
+
+
+{% endblock %}
+
+{% block script %}
+<script type="module">
+    // Empty vue used for toast to declar vue is used in the rest of the project
+    const {createApp, ref, onMounted} = Vue
+    import {message_list, display_toast, create_message} from '/static/js/toaster.js'
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+
+            let easymde
+            const current_doc = ref()
+
+            // async function fetch_current_category() {
+            //     const res = await fetch("/documentation/subcategory/current")
+            //     if(await res.status==404 ){
+            //         display_toast(res)
+            //     }else{
+            //         let loc = await res.json()
+            //         active_category.value = loc["category"]
+            //     }
+            // }
+
+            async function fetch_current_doc() {
+                const res = await fetch("/documentation/current")
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    let loc = await res.json()
+                    current_doc.value = loc["doc"]
+                }
+
+                let text = ""
+                if(current_doc.value){
+                    text = current_doc.value.text
+                }
+                init_esaymde(text)
+            }
+
+            async function submit() {
+                $("#error-input-title").text("")
+                
+                
+                if(!$("#input-title").val()){
+                    $("#error-input-title").text("Give me more")
+                }else{
+                    let url = "/documentation/create"
+                    if(current_doc.value){
+                        url = "/documentation/"+current_doc.value.id+"/edit"
+                    }
+                    const res = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": $("#csrf_token").val(), "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "title": $("#input-title").val(),
+                            "description": $("#textarea-description").val(),
+                            "text": easymde.value(),
+                            // "category_id": props.category.id
+                        })
+                    });
+                    if(await res.status==200){
+                        let loc = await res.json()
+                        if(!current_doc.value){
+                            let d_id = loc["doc_id"]
+                            
+                            window.location.replace("/documentation/view/"+d_id)
+                        }else{
+                            window.location.replace("/documentation/view/"+current_doc.value.id)
+                        }
+                    }else{
+                        display_toast(res)
+                    }
+                }
+                
+            }
+
+            function init_esaymde(text){
+                easymde = new EasyMDE({
+                    element: document.getElementById('my-text-area'),
+                    uploadImage: true,
+                    imageMaxSize: 4194304,
+                    // imageUploadEndpoint: ,
+                    tabSize: 4,
+                    autosave:{
+                        enabled: true,
+                        uniqueId: 123
+                    },
+                });
+                easymde.value(text)
+            }
+
+
+            onMounted(() => {
+                // fetch_current_category()
+                fetch_current_doc()
+                
+            })
+
+            return {
+                message_list,
+                current_doc,
+                submit,
+
+            }
+        }
+    }).mount('.container-fluid')
+</script>
+{% endblock %}

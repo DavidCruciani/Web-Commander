@@ -1,0 +1,84 @@
+<!-- 
+    Author: David Cruciani
+-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <h1>Documentation</h1>
+    <hr>
+
+    <br>
+    <!--  -->
+
+    <div v-if="active_category">
+        <!-- Breadcrumb -->
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="btn btn-link p-0" href="/documentation">Home</a></li>
+                <li class="breadcrumb-item">
+                    <a class="btn btn-link p-0" :href="'/documentation/category/'+active_category.parent_category.id">
+                        [[active_category.parent_category.name]]
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">[[active_category.name]]</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex">
+            <h4>[[active_category.name]]</h4>
+            <a type="button" class="btn btn-outline-primary" href="/documentation/add_documentation">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+        </div>
+        
+        <hr>
+        <!-- <h6>Commands</h6>
+        <div v-for="command in active_category.commands">
+            
+            <pre><code>[[command]]</code></pre>
+        </div> -->
+
+    </div>
+  
+
+
+{% endblock %}
+
+{% block script %}
+<script type="module">
+    // Empty vue used for toast to declar vue is used in the rest of the project
+    const {createApp, ref, onMounted} = Vue
+    import {message_list, display_toast, create_message} from '/static/js/toaster.js'
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+
+            const active_category = ref()
+
+            async function fetch_current_category() {
+                const res = await fetch("/documentation/subcategory/current")
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    let loc = await res.json()
+                    active_category.value = loc["category"]
+                }
+            }
+
+
+            onMounted(() => {
+                fetch_current_category()
+            })
+
+            return {
+                message_list,
+                active_category,
+
+
+            }
+        }
+    }).mount('.container-fluid')
+</script>
+{% endblock %}

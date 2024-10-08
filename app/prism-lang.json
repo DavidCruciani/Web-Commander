@@ -1,0 +1,1190 @@
+[
+  {
+    "title": "Markup",
+    "code": "markup"
+  },
+  {
+    "title": "CSS",
+    "code": "css"
+  },
+  {
+    "title": "C-like",
+    "code": "clike"
+  },
+  {
+    "title": "JavaScript",
+    "code": "javascript"
+  },
+  {
+    "title": "ABAP",
+    "code": "abap"
+  },
+  {
+    "title": "ABNF",
+    "code": "abnf"
+  },
+  {
+    "title": "ActionScript",
+    "code": "actionscript"
+  },
+  {
+    "title": "Ada",
+    "code": "ada"
+  },
+  {
+    "title": "Agda",
+    "code": "agda"
+  },
+  {
+    "title": "AL",
+    "code": "al"
+  },
+  {
+    "title": "ANTLR4",
+    "code": "antlr4"
+  },
+  {
+    "title": "Apache Configuration",
+    "code": "apacheconf"
+  },
+  {
+    "title": "Apex",
+    "code": "apex"
+  },
+  {
+    "title": "APL",
+    "code": "apl"
+  },
+  {
+    "title": "AppleScript",
+    "code": "applescript"
+  },
+  {
+    "title": "AQL",
+    "code": "aql"
+  },
+  {
+    "title": "Arduino",
+    "code": "arduino"
+  },
+  {
+    "title": "ARFF",
+    "code": "arff"
+  },
+  {
+    "title": "ARM Assembly",
+    "code": "armasm"
+  },
+  {
+    "title": "Arturo",
+    "code": "arturo"
+  },
+  {
+    "title": "AsciiDoc",
+    "code": "asciidoc"
+  },
+  {
+    "title": "ASP.NET (C#)",
+    "code": "aspnet"
+  },
+  {
+    "title": "6502 Assembly",
+    "code": "asm6502"
+  },
+  {
+    "title": "Atmel AVR Assembly",
+    "code": "asmatmel"
+  },
+  {
+    "title": "AutoHotkey",
+    "code": "autohotkey"
+  },
+  {
+    "title": "AutoIt",
+    "code": "autoit"
+  },
+  {
+    "title": "AviSynth",
+    "code": "avisynth"
+  },
+  {
+    "title": "Avro IDL",
+    "code": "avro-idl"
+  },
+  {
+    "title": "AWK",
+    "code": "awk"
+  },
+  {
+    "title": "Bash",
+    "code": "bash"
+  },
+  {
+    "title": "BASIC",
+    "code": "basic"
+  },
+  {
+    "title": "Batch",
+    "code": "batch"
+  },
+  {
+    "title": "BBcode",
+    "code": "bbcode"
+  },
+  {
+    "title": "BBj",
+    "code": "bbj"
+  },
+  {
+    "title": "Bicep",
+    "code": "bicep"
+  },
+  {
+    "title": "Birb",
+    "code": "birb"
+  },
+  {
+    "title": "Bison",
+    "code": "bison"
+  },
+  {
+    "title": "BNF",
+    "code": "bnf"
+  },
+  {
+    "title": "BQN",
+    "code": "bqn"
+  },
+  {
+    "title": "Brainfuck",
+    "code": "brainfuck"
+  },
+  {
+    "title": "BrightScript",
+    "code": "brightscript"
+  },
+  {
+    "title": "Bro",
+    "code": "bro"
+  },
+  {
+    "title": "BSL (1C:Enterprise)",
+    "code": "bsl"
+  },
+  {
+    "title": "C",
+    "code": "c"
+  },
+  {
+    "title": "C#",
+    "code": "csharp"
+  },
+  {
+    "title": "C++",
+    "code": "cpp"
+  },
+  {
+    "title": "CFScript",
+    "code": "cfscript"
+  },
+  {
+    "title": "ChaiScript",
+    "code": "chaiscript"
+  },
+  {
+    "title": "CIL",
+    "code": "cil"
+  },
+  {
+    "title": "Cilk/C",
+    "code": "cilkc"
+  },
+  {
+    "title": "Cilk/C++",
+    "code": "cilkcpp"
+  },
+  {
+    "title": "Clojure",
+    "code": "clojure"
+  },
+  {
+    "title": "CMake",
+    "code": "cmake"
+  },
+  {
+    "title": "COBOL",
+    "code": "cobol"
+  },
+  {
+    "title": "CoffeeScript",
+    "code": "coffeescript"
+  },
+  {
+    "title": "Concurnas",
+    "code": "concurnas"
+  },
+  {
+    "title": "Content-Security-Policy",
+    "code": "csp"
+  },
+  {
+    "title": "Cooklang",
+    "code": "cooklang"
+  },
+  {
+    "title": "Coq",
+    "code": "coq"
+  },
+  {
+    "title": "Crystal",
+    "code": "crystal"
+  },
+  {
+    "title": "CSS Extras",
+    "code": "css-extras"
+  },
+  {
+    "title": "CSV",
+    "code": "csv"
+  },
+  {
+    "title": "CUE",
+    "code": "cue"
+  },
+  {
+    "title": "Cypher",
+    "code": "cypher"
+  },
+  {
+    "title": "D",
+    "code": "d"
+  },
+  {
+    "title": "Dart",
+    "code": "dart"
+  },
+  {
+    "title": "DataWeave",
+    "code": "dataweave"
+  },
+  {
+    "title": "DAX",
+    "code": "dax"
+  },
+  {
+    "title": "Dhall",
+    "code": "dhall"
+  },
+  {
+    "title": "Diff",
+    "code": "diff"
+  },
+  {
+    "title": "Django/Jinja2",
+    "code": "django"
+  },
+  {
+    "title": "DNS zone file",
+    "code": "dns-zone-file"
+  },
+  {
+    "title": "Docker",
+    "code": "docker"
+  },
+  {
+    "title": "DOT (Graphviz)",
+    "code": "dot"
+  },
+  {
+    "title": "EBNF",
+    "code": "ebnf"
+  },
+  {
+    "title": "EditorConfig",
+    "code": "editorconfig"
+  },
+  {
+    "title": "Eiffel",
+    "code": "eiffel"
+  },
+  {
+    "title": "EJS",
+    "code": "ejs"
+  },
+  {
+    "title": "Elixir",
+    "code": "elixir"
+  },
+  {
+    "title": "Elm",
+    "code": "elm"
+  },
+  {
+    "title": "Embedded Lua templating",
+    "code": "etlua"
+  },
+  {
+    "title": "ERB",
+    "code": "erb"
+  },
+  {
+    "title": "Erlang",
+    "code": "erlang"
+  },
+  {
+    "title": "Excel Formula",
+    "code": "excel-formula"
+  },
+  {
+    "title": "F#",
+    "code": "fsharp"
+  },
+  {
+    "title": "Factor",
+    "code": "factor"
+  },
+  {
+    "title": "False",
+    "code": "false"
+  },
+  {
+    "title": "Firestore security rules",
+    "code": "firestore-security-rules"
+  },
+  {
+    "title": "Flow",
+    "code": "flow"
+  },
+  {
+    "title": "Fortran",
+    "code": "fortran"
+  },
+  {
+    "title": "FreeMarker Template Language",
+    "code": "ftl"
+  },
+  {
+    "title": "GameMaker Language",
+    "code": "gml"
+  },
+  {
+    "title": "GAP (CAS)",
+    "code": "gap"
+  },
+  {
+    "title": "G-code",
+    "code": "gcode"
+  },
+  {
+    "title": "GDScript",
+    "code": "gdscript"
+  },
+  {
+    "title": "GEDCOM",
+    "code": "gedcom"
+  },
+  {
+    "title": "gettext",
+    "code": "gettext"
+  },
+  {
+    "title": "Gherkin",
+    "code": "gherkin"
+  },
+  {
+    "title": "Git",
+    "code": "git"
+  },
+  {
+    "title": "GLSL",
+    "code": "glsl"
+  },
+  {
+    "title": "GN",
+    "code": "gn"
+  },
+  {
+    "title": "GNU Linker Script",
+    "code": "linker-script"
+  },
+  {
+    "title": "Go",
+    "code": "go"
+  },
+  {
+    "title": "Go module",
+    "code": "go-module"
+  },
+  {
+    "title": "Gradle",
+    "code": "gradle"
+  },
+  {
+    "title": "GraphQL",
+    "code": "graphql"
+  },
+  {
+    "title": "Groovy",
+    "code": "groovy"
+  },
+  {
+    "title": "Haml",
+    "code": "haml"
+  },
+  {
+    "title": "Handlebars",
+    "code": "handlebars"
+  },
+  {
+    "title": "Haskell",
+    "code": "haskell"
+  },
+  {
+    "title": "Haxe",
+    "code": "haxe"
+  },
+  {
+    "title": "HCL",
+    "code": "hcl"
+  },
+  {
+    "title": "HLSL",
+    "code": "hlsl"
+  },
+  {
+    "title": "Hoon",
+    "code": "hoon"
+  },
+  {
+    "title": "HTTP",
+    "code": "http"
+  },
+  {
+    "title": "HTTP Public-Key-Pins",
+    "code": "hpkp"
+  },
+  {
+    "title": "HTTP Strict-Transport-Security",
+    "code": "hsts"
+  },
+  {
+    "title": "IchigoJam",
+    "code": "ichigojam"
+  },
+  {
+    "title": "Icon",
+    "code": "icon"
+  },
+  {
+    "title": "ICU Message Format",
+    "code": "icu-message-format"
+  },
+  {
+    "title": "Idris",
+    "code": "idris"
+  },
+  {
+    "title": ".ignore",
+    "code": "ignore"
+  },
+  {
+    "title": "Inform 7",
+    "code": "inform7"
+  },
+  {
+    "title": "Ini",
+    "code": "ini"
+  },
+  {
+    "title": "Io",
+    "code": "io"
+  },
+  {
+    "title": "J",
+    "code": "j"
+  },
+  {
+    "title": "Java",
+    "code": "java"
+  },
+  {
+    "title": "JavaDoc",
+    "code": "javadoc"
+  },
+  {
+    "title": "JavaDoc-like",
+    "code": "javadoclike"
+  },
+  {
+    "title": "Java stack trace",
+    "code": "javastacktrace"
+  },
+  {
+    "title": "Jexl",
+    "code": "jexl"
+  },
+  {
+    "title": "Jolie",
+    "code": "jolie"
+  },
+  {
+    "title": "JQ",
+    "code": "jq"
+  },
+  {
+    "title": "JSDoc",
+    "code": "jsdoc"
+  },
+  {
+    "title": "JS Extras",
+    "code": "js-extras"
+  },
+  {
+    "title": "JSON",
+    "code": "json"
+  },
+  {
+    "title": "JSON5",
+    "code": "json5"
+  },
+  {
+    "title": "JSONP",
+    "code": "jsonp"
+  },
+  {
+    "title": "JS stack trace",
+    "code": "jsstacktrace"
+  },
+  {
+    "title": "JS Templates",
+    "code": "js-templates"
+  },
+  {
+    "title": "Julia",
+    "code": "julia"
+  },
+  {
+    "title": "Keepalived Configure",
+    "code": "keepalived"
+  },
+  {
+    "title": "Keyman",
+    "code": "keyman"
+  },
+  {
+    "title": "Kotlin",
+    "code": "kotlin"
+  },
+  {
+    "title": "KuMir (КуМир)",
+    "code": "kumir"
+  },
+  {
+    "title": "Kusto",
+    "code": "kusto"
+  },
+  {
+    "title": "LaTeX",
+    "code": "latex"
+  },
+  {
+    "title": "Latte",
+    "code": "latte"
+  },
+  {
+    "title": "Less",
+    "code": "less"
+  },
+  {
+    "title": "LilyPond",
+    "code": "lilypond"
+  },
+  {
+    "title": "Liquid",
+    "code": "liquid"
+  },
+  {
+    "title": "Lisp",
+    "code": "lisp"
+  },
+  {
+    "title": "LiveScript",
+    "code": "livescript"
+  },
+  {
+    "title": "LLVM IR",
+    "code": "llvm"
+  },
+  {
+    "title": "Log file",
+    "code": "log"
+  },
+  {
+    "title": "LOLCODE",
+    "code": "lolcode"
+  },
+  {
+    "title": "Lua",
+    "code": "lua"
+  },
+  {
+    "title": "Magma (CAS)",
+    "code": "magma"
+  },
+  {
+    "title": "Makefile",
+    "code": "makefile"
+  },
+  {
+    "title": "Markdown",
+    "code": "markdown"
+  },
+  {
+    "title": "Markup templating",
+    "code": "markup-templating"
+  },
+  {
+    "title": "Mata",
+    "code": "mata"
+  },
+  {
+    "title": "MATLAB",
+    "code": "matlab"
+  },
+  {
+    "title": "MAXScript",
+    "code": "maxscript"
+  },
+  {
+    "title": "MEL",
+    "code": "mel"
+  },
+  {
+    "title": "Mermaid",
+    "code": "mermaid"
+  },
+  {
+    "title": "METAFONT",
+    "code": "metafont"
+  },
+  {
+    "title": "Mizar",
+    "code": "mizar"
+  },
+  {
+    "title": "MongoDB",
+    "code": "mongodb"
+  },
+  {
+    "title": "Monkey",
+    "code": "monkey"
+  },
+  {
+    "title": "MoonScript",
+    "code": "moonscript"
+  },
+  {
+    "title": "N1QL",
+    "code": "n1ql"
+  },
+  {
+    "title": "N4JS",
+    "code": "n4js"
+  },
+  {
+    "title": "Nand To Tetris HDL",
+    "code": "nand2tetris-hdl"
+  },
+  {
+    "title": "Naninovel Script",
+    "code": "naniscript"
+  },
+  {
+    "title": "NASM",
+    "code": "nasm"
+  },
+  {
+    "title": "NEON",
+    "code": "neon"
+  },
+  {
+    "title": "Nevod",
+    "code": "nevod"
+  },
+  {
+    "title": "nginx",
+    "code": "nginx"
+  },
+  {
+    "title": "Nim",
+    "code": "nim"
+  },
+  {
+    "title": "Nix",
+    "code": "nix"
+  },
+  {
+    "title": "NSIS",
+    "code": "nsis"
+  },
+  {
+    "title": "Objective-C",
+    "code": "objectivec"
+  },
+  {
+    "title": "OCaml",
+    "code": "ocaml"
+  },
+  {
+    "title": "Odin",
+    "code": "odin"
+  },
+  {
+    "title": "OpenCL",
+    "code": "opencl"
+  },
+  {
+    "title": "OpenQasm",
+    "code": "openqasm"
+  },
+  {
+    "title": "Oz",
+    "code": "oz"
+  },
+  {
+    "title": "PARI/GP",
+    "code": "parigp"
+  },
+  {
+    "title": "Parser",
+    "code": "parser"
+  },
+  {
+    "title": "Pascal",
+    "code": "pascal"
+  },
+  {
+    "title": "Pascaligo",
+    "code": "pascaligo"
+  },
+  {
+    "title": "PATROL Scripting Language",
+    "code": "psl"
+  },
+  {
+    "title": "PC-Axis",
+    "code": "pcaxis"
+  },
+  {
+    "title": "PeopleCode",
+    "code": "peoplecode"
+  },
+  {
+    "title": "Perl",
+    "code": "perl"
+  },
+  {
+    "title": "PHP",
+    "code": "php"
+  },
+  {
+    "title": "PHPDoc",
+    "code": "phpdoc"
+  },
+  {
+    "title": "PHP Extras",
+    "code": "php-extras"
+  },
+  {
+    "title": "PlantUML",
+    "code": "plant-uml"
+  },
+  {
+    "title": "PL/SQL",
+    "code": "plsql"
+  },
+  {
+    "title": "PowerQuery",
+    "code": "powerquery"
+  },
+  {
+    "title": "PowerShell",
+    "code": "powershell"
+  },
+  {
+    "title": "Processing",
+    "code": "processing"
+  },
+  {
+    "title": "Prolog",
+    "code": "prolog"
+  },
+  {
+    "title": "PromQL",
+    "code": "promql"
+  },
+  {
+    "title": ".properties",
+    "code": "properties"
+  },
+  {
+    "title": "Protocol Buffers",
+    "code": "protobuf"
+  },
+  {
+    "title": "Pug",
+    "code": "pug"
+  },
+  {
+    "title": "Puppet",
+    "code": "puppet"
+  },
+  {
+    "title": "Pure",
+    "code": "pure"
+  },
+  {
+    "title": "PureBasic",
+    "code": "purebasic"
+  },
+  {
+    "title": "PureScript",
+    "code": "purescript"
+  },
+  {
+    "title": "Python",
+    "code": "python"
+  },
+  {
+    "title": "Q#",
+    "code": "qsharp"
+  },
+  {
+    "title": "Q (kdb+ database)",
+    "code": "q"
+  },
+  {
+    "title": "QML",
+    "code": "qml"
+  },
+  {
+    "title": "Qore",
+    "code": "qore"
+  },
+  {
+    "title": "R",
+    "code": "r"
+  },
+  {
+    "title": "Racket",
+    "code": "racket"
+  },
+  {
+    "title": "Razor C#",
+    "code": "cshtml"
+  },
+  {
+    "title": "React JSX",
+    "code": "jsx"
+  },
+  {
+    "title": "React TSX",
+    "code": "tsx"
+  },
+  {
+    "title": "Reason",
+    "code": "reason"
+  },
+  {
+    "title": "Regex",
+    "code": "regex"
+  },
+  {
+    "title": "Rego",
+    "code": "rego"
+  },
+  {
+    "title": "Ren'py",
+    "code": "renpy"
+  },
+  {
+    "title": "ReScript",
+    "code": "rescript"
+  },
+  {
+    "title": "reST (reStructuredText)",
+    "code": "rest"
+  },
+  {
+    "title": "Rip",
+    "code": "rip"
+  },
+  {
+    "title": "Roboconf",
+    "code": "roboconf"
+  },
+  {
+    "title": "Robot Framework",
+    "code": "robotframework"
+  },
+  {
+    "title": "Ruby",
+    "code": "ruby"
+  },
+  {
+    "title": "Rust",
+    "code": "rust"
+  },
+  {
+    "title": "SAS",
+    "code": "sas"
+  },
+  {
+    "title": "Sass (Sass)",
+    "code": "sass"
+  },
+  {
+    "title": "Sass (SCSS)",
+    "code": "scss"
+  },
+  {
+    "title": "Scala",
+    "code": "scala"
+  },
+  {
+    "title": "Scheme",
+    "code": "scheme"
+  },
+  {
+    "title": "Shell session",
+    "code": "shell-session"
+  },
+  {
+    "title": "Smali",
+    "code": "smali"
+  },
+  {
+    "title": "Smalltalk",
+    "code": "smalltalk"
+  },
+  {
+    "title": "Smarty",
+    "code": "smarty"
+  },
+  {
+    "title": "SML",
+    "code": "sml"
+  },
+  {
+    "title": "Solidity (Ethereum)",
+    "code": "solidity"
+  },
+  {
+    "title": "Solution file",
+    "code": "solution-file"
+  },
+  {
+    "title": "Soy (Closure Template)",
+    "code": "soy"
+  },
+  {
+    "title": "SPARQL",
+    "code": "sparql"
+  },
+  {
+    "title": "Splunk SPL",
+    "code": "splunk-spl"
+  },
+  {
+    "title": "SQF: Status Quo Function (Arma 3)",
+    "code": "sqf"
+  },
+  {
+    "title": "SQL",
+    "code": "sql"
+  },
+  {
+    "title": "Squirrel",
+    "code": "squirrel"
+  },
+  {
+    "title": "Stan",
+    "code": "stan"
+  },
+  {
+    "title": "Stata Ado",
+    "code": "stata"
+  },
+  {
+    "title": "Structured Text (IEC 61131-3)",
+    "code": "iecst"
+  },
+  {
+    "title": "Stylus",
+    "code": "stylus"
+  },
+  {
+    "title": "SuperCollider",
+    "code": "supercollider"
+  },
+  {
+    "title": "Swift",
+    "code": "swift"
+  },
+  {
+    "title": "Systemd configuration file",
+    "code": "systemd"
+  },
+  {
+    "title": "T4 templating",
+    "code": "t4-templating"
+  },
+  {
+    "title": "T4 Text Templates (C#)",
+    "code": "t4-cs"
+  },
+  {
+    "title": "T4 Text Templates (VB)",
+    "code": "t4-vb"
+  },
+  {
+    "title": "TAP",
+    "code": "tap"
+  },
+  {
+    "title": "Tcl",
+    "code": "tcl"
+  },
+  {
+    "title": "Template Toolkit 2",
+    "code": "tt2"
+  },
+  {
+    "title": "Textile",
+    "code": "textile"
+  },
+  {
+    "title": "TOML",
+    "code": "toml"
+  },
+  {
+    "title": "Tremor",
+    "code": "tremor"
+  },
+  {
+    "title": "Turtle",
+    "code": "turtle"
+  },
+  {
+    "title": "Twig",
+    "code": "twig"
+  },
+  {
+    "title": "TypeScript",
+    "code": "typescript"
+  },
+  {
+    "title": "TypoScript",
+    "code": "typoscript"
+  },
+  {
+    "title": "UnrealScript",
+    "code": "unrealscript"
+  },
+  {
+    "title": "UO Razor Script",
+    "code": "uorazor"
+  },
+  {
+    "title": "URI",
+    "code": "uri"
+  },
+  {
+    "title": "V",
+    "code": "v"
+  },
+  {
+    "title": "Vala",
+    "code": "vala"
+  },
+  {
+    "title": "VB.Net",
+    "code": "vbnet"
+  },
+  {
+    "title": "Velocity",
+    "code": "velocity"
+  },
+  {
+    "title": "Verilog",
+    "code": "verilog"
+  },
+  {
+    "title": "VHDL",
+    "code": "vhdl"
+  },
+  {
+    "title": "vim",
+    "code": "vim"
+  },
+  {
+    "title": "Visual Basic",
+    "code": "visual-basic"
+  },
+  {
+    "title": "WarpScript",
+    "code": "warpscript"
+  },
+  {
+    "title": "WebAssembly",
+    "code": "wasm"
+  },
+  {
+    "title": "Web IDL",
+    "code": "web-idl"
+  },
+  {
+    "title": "WGSL",
+    "code": "wgsl"
+  },
+  {
+    "title": "Wiki markup",
+    "code": "wiki"
+  },
+  {
+    "title": "Wolfram language",
+    "code": "wolfram"
+  },
+  {
+    "title": "Wren",
+    "code": "wren"
+  },
+  {
+    "title": "Xeora",
+    "code": "xeora"
+  },
+  {
+    "title": "XML doc (.net)",
+    "code": "xml-doc"
+  },
+  {
+    "title": "Xojo (REALbasic)",
+    "code": "xojo"
+  },
+  {
+    "title": "XQuery",
+    "code": "xquery"
+  },
+  {
+    "title": "YAML",
+    "code": "yaml"
+  },
+  {
+    "title": "YANG",
+    "code": "yang"
+  },
+  {
+    "title": "Zig",
+    "code": "zig"
+  }
+]

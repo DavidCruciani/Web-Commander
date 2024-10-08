@@ -1,0 +1,168 @@
+<!-- 
+    Author: David Cruciani
+-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <h1>Command</h1>
+    <hr>
+
+    
+    <button v-if="active_category" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-sub-category">
+        New sub cat
+    </button>
+     
+    
+    <!-- Modal sub Add Category -->
+    <div class="modal fade" id="add-sub-category" tabindex="-1" aria-labelledby="add-sub-categoryLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="add-sub-categoryLabel">Add a Category</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-floating col">
+                            <input class="form-control" id="input-add-sub-category" type="text"></input>
+                            <label>Name</label>
+                        </div>
+                        <div id="error-add-sub-category" style="color: brown;"></div>
+                        <div class="form-floating col">
+                            <input class="form-control" id="input-choose-color" type="color"></input>
+                            <label>Color</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" @click="add_new_sub_cat()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <!--  -->
+
+    <div v-if="active_category">
+        <!-- Breadcrumb -->
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="btn btn-link p-0" href="/command">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">[[active_category.name]]</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex">
+            <h4>[[active_category.name]]</h4>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-create-command">
+                <i class="fa-solid fa-plus"></i>
+            </button>              
+        </div>
+
+        <hr>
+        <h6>Sub categories</h6>
+        <div v-for="subcat in active_category.subcats" class="row">
+            <div class="col-4 subcat-block">
+                <a :href="'/command/category/'+active_category.id+'/subcategory/'+subcat.id">[[subcat.name]]</a>
+            </div>
+        </div>
+
+        <div v-for="command in active_category.commands">
+            <hr>
+            <h4>[[command.title]]</h4>
+            <i>[[command.description]]</i>
+            <pre class="line-numbers"><code :class="'language-'+command.lang">[[command.text]]</code></pre>
+            
+        </div>
+        
+        <create_command :category="active_category"></create_command>
+    </div>
+  
+
+{% endblock %}
+
+{% block script %}
+<script type="module">
+    // Prism.plugins.toolbar.registerButton('hello-world', {
+    //     text: 'Hello World!', // required
+    //     onClick: function (env) { // optional
+    //         alert('This code snippet is written in ' + env.language + '.');
+    //     }
+    // });
+    // Empty vue used for toast to declar vue is used in the rest of the project
+    const {createApp, ref, onMounted, onUpdated, nextTick} = Vue
+    import {message_list, display_toast, create_message} from '/static/js/toaster.js'
+    import create_command from '/static/js/command/create_command.js'
+    createApp({
+        delimiters: ['[[', ']]'],
+        components : {
+            create_command
+        },
+        setup() {
+            
+            const active_category = ref()
+
+            async function fetch_current_category() {
+                const res = await fetch("/command/category/current")
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    let loc = await res.json()
+                    active_category.value = loc["category"]
+                }
+                await nextTick()
+                Prism.highlightAll()
+            }
+
+            async function add_new_sub_cat() {
+                $("#error-add-sub-category").text("")
+                let loc_cat = $("#input-add-sub-category").val()
+                if(!loc_cat){
+                    $("#error-add-category").text("Need a name")
+                }else{
+                    let url = "/command/category/"+active_category.value.id+"/add_sub_category"
+                    const res = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": $("#csrf_token").val(), "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "name": loc_cat,
+                            "color": $("#input-choose-color").val()
+                        })
+                    });
+                    if(await res.status==200){
+                        await fetch_current_category()
+                        $("#add-sub-category").modal("hide")
+                    }
+                    display_toast(res)
+                }
+            }
+
+
+            onMounted(() => {
+                fetch_current_category()
+            })
+
+            // onUpdated(() => {
+            //     Prism.highlightAll()
+            // })
+
+            return {
+                message_list,
+                active_category,
+
+
+                add_new_sub_cat
+            }
+        }
+    }).mount('.container-fluid')
+</script>
+{% endblock %}

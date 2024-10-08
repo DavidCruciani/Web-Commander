@@ -1,0 +1,126 @@
+<!-- 
+    Author: David Cruciani
+-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    
+    <h1>Command</h1>
+    <hr>
+
+    
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-category">
+        New cat
+    </button>
+     
+    
+    <!-- Modal Add Category -->
+    <div class="modal fade" id="add-category" tabindex="-1" aria-labelledby="add-categoryLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="add-categoryLabel">Add a Category</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-floating col">
+                            <input class="form-control" id="input-add-category" type="text"></input>
+                            <label>Name</label>
+                        </div>
+                        <div id="error-add-category" style="color: brown;"></div>
+                        <div class="form-floating col">
+                            <input class="form-control" id="input-choose-color" type="color"></input>
+                            <label>Color</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" @click="add_new_cat()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <!--  -->
+
+
+
+    <ul class="list-group col-6">
+        <!-- <li class="list-group-item col-6" v-for="category in categories_list" :style="'background-color:'+category.color">[[category.name]]</li> -->
+        <a class="list-group-item list-group-item-action col-6" v-for="category in categories_list"
+         :href="'/command/category/'+category.id">
+            [[category.name]]
+        </a>
+    </ul>
+    
+
+
+{% endblock %}
+
+{% block script %}
+<script type="module">
+    // Empty vue used for toast to declar vue is used in the rest of the project
+    const {createApp, ref, onMounted} = Vue
+    import {message_list, display_toast, create_message} from '/static/js/toaster.js'
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+
+            const categories_list = ref([])
+
+            async function fetch_categories() {
+                const res = await fetch("/command/root_categories")
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    let loc = await res.json()
+                    categories_list.value = loc["categories"]
+                }
+            }
+
+            async function add_new_cat() {
+                $("#error-add-category").text("")
+                let loc_cat = $("#input-add-category").val()
+                if(!loc_cat){
+                    $("#error-add-category").text("Need a name")
+                }else{
+                    let url = "/command/add_category"
+                    const res = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": $("#csrf_token").val(), "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "name": loc_cat,
+                            "color": $("#input-choose-color").val()
+                        })
+                    });
+                    if(await res.status==200){
+                        await fetch_categories()
+                    }
+                    display_toast(res)
+                }
+            }
+
+
+            onMounted(() => {
+                fetch_categories()
+            })
+
+            return {
+                message_list,
+                categories_list,
+
+                add_new_cat
+            }
+        }
+    }).mount('.container-fluid')
+</script>
+{% endblock %}

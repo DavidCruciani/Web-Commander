@@ -1,0 +1,138 @@
+<!-- 
+    Author: David Cruciani
+-->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <div v-if="current_doc">
+        <h1>[[current_doc.title]]</h1>
+        <button class="btn btn-danger" style="float: right;" data-bs-toggle="modal" data-bs-target="#delete_doc">
+            <i class="fa-solid fa-trash"></i>
+        </button>
+
+        <!-- Modal delete doc -->
+        <div class="modal fade" id="delete_doc" tabindex="-1" aria-labelledby="delete_doc_modal" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="delete_doc_modal">Delete '[[current_doc.title]]' ?</h1>
+                        
+                        <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>This will delete all your files...</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-danger btn-sm"  @click="delete_doc()"><i class="fa-solid fa-trash"></i> Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <i v-if="current_doc.description">[[current_doc.description]]</i>
+        <i v-else>No description</i>
+        <hr>
+
+        <div class="row">
+            <div class="col-7">
+                <a class="btn btn-primary mb-2" :href="'/documentation/'+current_doc.id+'/edit_view'">Edit</a>
+                <div class="card card-body" v-html="md.render(current_doc.text)"></div>
+            </div>
+
+            <div class="col-1"></div>
+
+            <div class="col-4 card card-body" style="margin-left: -50px; margin-right: 15px; height: 30vh;">
+                <h5><u>More Info</u></h5>
+
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item">
+                        <button class="nav-link active" id="tab-panel-main" aria-current="page" @click="select_tab_panel('main')">Main</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="tab-panel-meta" @click="select_tab_panel('meta')">Meta</button>
+                    </li>
+                </ul>
+
+                <div v-if="selected_tab == 'main'">
+                    <tabFile :doc_id="current_doc.id"></tabFile>
+                </div>
+                
+                <div v-else-if="selected_tab == 'meta'">
+                    meta
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script type="module">
+    // Empty vue used for toast to declar vue is used in the rest of the project
+    const {createApp, ref, onMounted} = Vue
+    import {message_list, display_toast, create_message} from '/static/js/toaster.js'
+    import tabfile from '/static/js/documentation/tab-file.js'
+    createApp({
+        delimiters: ['[[', ']]'],
+        components: {
+            tabfile
+        },
+        setup() {
+
+            const md = window.markdownit()
+            const current_doc = ref()
+            const selected_tab = ref("main")
+
+            async function fetch_current_doc() {
+                const res = await fetch("/documentation/"+window.location.pathname.split("/").slice(-1))
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    let loc = await res.json()
+                    current_doc.value = loc["doc"]
+                }
+            }
+
+            function select_tab_panel(tab_name){
+                if(tab_name == 'main'){
+                    selected_tab.value = 'main'
+                    if ( !document.getElementById("tab-panel-main").classList.contains("active") ){
+                        document.getElementById("tab-panel-main").classList.add("active")
+                        document.getElementById("tab-panel-meta").classList.remove("active")
+                    }
+                }else if(tab_name == 'meta'){
+                    selected_tab.value = 'meta'
+                    if ( !document.getElementById("tab-panel-meta").classList.contains("active") ){
+                        document.getElementById("tab-panel-meta").classList.add("active")
+                        document.getElementById("tab-panel-main").classList.remove("active")
+                    }
+                }
+            }
+            
+            async function delete_doc() {
+                const res = await fetch('/documentation/' + current_doc.value.id + '/delete')
+                if(await res.status == 200){
+                    window.location.replace='/documentation'
+                }
+                display_toast(res)
+            }
+
+
+            onMounted(() => {
+                fetch_current_doc()
+            })
+
+            return {
+                message_list,
+                md,
+                current_doc,
+                selected_tab,
+
+                select_tab_panel,
+            }
+        }
+    }).mount('.container-fluid')
+</script>
+{% endblock %}
