@@ -6,10 +6,38 @@
 
 {% block content %}
     <div v-if="current_doc">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb"></nav>
+            <ol class="breadcrumb" style="margin-top: 10px; margin-bottom: -7px;">
+                <li class="breadcrumb-item"><a class="btn btn-link p-0" href="/documentation">Home</a></li>
+                <li class="breadcrumb-item" v-if="current_doc.category.parent_category.name">
+                    <a class="btn btn-link p-0" :href="'/documentation/category/'+current_doc.category.parent_category.id">
+                        [[current_doc.category.parent_category.name]]
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    <a class="btn btn-link p-0" :href="'/documentation/category/'+current_doc.category.id">
+                        [[current_doc.category.name]]
+                    </a>
+                </li>
+            </ol>
+        </nav>
+
         <h1>[[current_doc.title]]</h1>
-        <button class="btn btn-danger" style="float: right;" data-bs-toggle="modal" data-bs-target="#delete_doc">
-            <i class="fa-solid fa-trash"></i>
-        </button>
+        <div style="float: right;">
+            <button class="btn btn-primary" title="Edit document" data-bs-toggle="modal" :data-bs-target="'#edit-doc-'+current_doc.id">
+                <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <!-- <button class="btn btn-warning" title="Archive document" data-bs-toggle="modal" :data-bs-target="'#edit-doc-'+current_doc.id"> -->
+            <button class="btn btn-warning" title="Archive document">
+                <i class="fa-solid fa-box-archive"></i>
+            </button>
+            <button class="btn btn-danger" title="Delete document" data-bs-toggle="modal" data-bs-target="#delete_doc">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+        
+
+        <editdoc :doc="current_doc"></editdoc>
 
         <!-- Modal delete doc -->
         <div class="modal fade" id="delete_doc" tabindex="-1" aria-labelledby="delete_doc_modal" aria-hidden="true">
@@ -37,8 +65,20 @@
 
         <div class="row">
             <div class="col-7">
-                <a class="btn btn-primary mb-2" :href="'/documentation/'+current_doc.id+'/edit_view'">Edit</a>
-                <div class="card card-body" v-html="md.render(current_doc.text)"></div>
+                <div class="d-flex mb-2">
+                    <!-- <a class="btn btn-outline-primary" :href="'/documentation/'+current_doc.id+'/edit_view'">
+                        <i class="fas fa-pen-to-square"></i>
+                        Edit
+                    </a> -->
+                    <button v-if="!edit_mode" class="btn btn-outline-primary" @click="edit_mode_change(true)">Edit</button>
+                    <button v-else class="btn btn-outline-primary" @click="save_change_easymd()">Save Changes</button>
+                    <a class="btn btn-outline-secondary" :href="'/documentation/'+current_doc.id+'/download'">
+                        <i class="fas fa-download"></i>
+                        Download
+                    </a>
+                </div>
+                <div v-if="!edit_mode" class="card card-body" v-html="md.render(current_doc.text)"></div>
+                <div v-else><textarea id="textarea-easymd"></textarea></div>
             </div>
 
             <div class="col-1"></div>
@@ -60,7 +100,12 @@
                 </div>
                 
                 <div v-else-if="selected_tab == 'meta'">
-                    meta
+                    <div :title="current_doc.creation_date">
+                        <i>Creation date: </i> [[formatNow(current_doc.creation_date)]]
+                    </div>
+                    <div :title="current_doc.last_modif">
+                        <i>Last modif: </i> [[formatNow(current_doc.last_modif)]]
+                    </div>
                 </div>
 
             </div>
@@ -71,19 +116,23 @@
 {% block script %}
 <script type="module">
     // Empty vue used for toast to declar vue is used in the rest of the project
-    const {createApp, ref, onMounted} = Vue
+    const {createApp, ref, onMounted, nextTick} = Vue
     import {message_list, display_toast, create_message} from '/static/js/toaster.js'
     import tabfile from '/static/js/documentation/tab-file.js'
+    import editdoc from '/static/js/documentation/edit-doc.js'
     createApp({
         delimiters: ['[[', ']]'],
         components: {
-            tabfile
+            tabfile,
+            editdoc
         },
         setup() {
 
             const md = window.markdownit()
             const current_doc = ref()
             const selected_tab = ref("main")
+            const edit_mode = ref(false)
+            let easymde
 
             async function fetch_current_doc() {
                 const res = await fetch("/documentation/"+window.location.pathname.split("/").slice(-1))
@@ -92,6 +141,9 @@
                 }else{
                     let loc = await res.json()
                     current_doc.value = loc["doc"]
+                    if (!current_doc.value.text){
+                        edit_mode_change(true)
+                    }
                 }
             }
 
@@ -119,6 +171,55 @@
                 display_toast(res)
             }
 
+            // Utils function
+            function formatNow(dt) {
+                return dayjs.utc(dt).from(dayjs.utc())
+            }
+
+            function endOf(dt){
+                return dayjs.utc(dt).endOf().from(dayjs.utc())
+            }
+
+
+            async function edit_mode_change(is_editing){
+                edit_mode.value = is_editing
+                await nextTick()
+                if(is_editing)
+                    init_esaymde()
+            }
+
+            function init_esaymde(){
+                easymde = new EasyMDE({
+                    element: document.getElementById('textarea-easymd'),
+                    uploadImage: true,
+                    imageMaxSize: 4194304,
+                    // imageUploadEndpoint: ,
+                    tabSize: 4,
+                    autosave:{
+                        enabled: true,
+                        uniqueId: 123
+                    },
+                });
+                easymde.value(current_doc.value.text)
+            }
+            async function save_change_easymd() {
+                const res = await fetch("/documentation/"+current_doc.value.id+"/edit_text", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": $("#csrf_token").val(), "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "text": easymde.value()
+                    })
+                });
+                if(await res.status==200){
+                    current_doc.value.text = easymde.value()
+                    if(current_doc.value.text)
+                        edit_mode_change(false)
+                }
+                display_toast(res)
+            }
+
 
             onMounted(() => {
                 fetch_current_doc()
@@ -129,8 +230,13 @@
                 md,
                 current_doc,
                 selected_tab,
+                edit_mode,
 
                 select_tab_panel,
+                formatNow,
+                endOf,
+                edit_mode_change,
+                save_change_easymd
             }
         }
     }).mount('.container-fluid')

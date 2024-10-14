@@ -10,13 +10,13 @@
     <hr>
 
     
-    <button v-if="active_category" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-sub-category">
+    <button v-if="active_category && !active_category.parent_category.id" type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#add-sub-category">
         New sub cat
     </button>
      
     
     <!-- Modal sub Add Category -->
-    <div class="modal fade" id="add-sub-category" tabindex="-1" aria-labelledby="add-sub-categoryLabel" aria-hidden="true">
+    <div class="modal fade" v-if="active_category && !active_category.parent_category.id" id="add-sub-category" tabindex="-1" aria-labelledby="add-sub-categoryLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -46,8 +46,6 @@
         </div>
     </div>
 
-    <br>
-    <br>
     <!--  -->
 
     <div v-if="active_category">
@@ -55,46 +53,61 @@
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a class="btn btn-link p-0" href="/documentation">Home</a></li>
+                <li class="breadcrumb-item" v-if="active_category.parent_category.name">
+                    <a class="btn btn-link p-0" :href="'/documentation/category/'+active_category.parent_category.id">
+                        [[active_category.parent_category.name]]
+                    </a>
+                </li>
                 <li class="breadcrumb-item active" aria-current="page">[[active_category.name]]</li>
             </ol>
         </nav>
 
         <div class="d-flex">
-            <h4>[[active_category.name]]</h4>
-            <a type="button" class="btn btn-outline-primary" href="/documentation/add_documentation">
+            <h4 style="margin-right: 4px;">[[active_category.name]]</h4>
+            <!-- <a type="button" class="btn btn-outline-primary" href="/documentation/add_documentation">
                 <i class="fa-solid fa-plus"></i>
-            </a>              
+            </a> -->
+            <button class="btn btn-outline-primary" title="Create document" data-bs-toggle="modal" data-bs-target="#modal-create-doc">
+                <i class="fa-solid fa-plus"></i>
+            </button>            
         </div>
+
+        <createdoc></createdoc>
 
         <hr>
-        <h6>Sub categories</h6>
-        <div v-for="subcat in active_category.subcats" class="row">
-            <div class="col-4 subcat-block">
-                <a :href="'/documentation/category/'+active_category.id+'/subcategory/'+subcat.id">[[subcat.name]]</a>
+        <div v-if="active_category.subcats.length">
+            <h6>Sub categories</h6>
+            <div v-for="subcat in active_category.subcats" class="row">
+                <div class="col-4 subcat-block">
+                    <a :href="'/documentation/category/'+subcat.id">[[subcat.name]]</a>
+                </div>
             </div>
+            <hr>
         </div>
+        
 
-        <!-- <div v-for="command in active_category.commands">
-            <hr>
-            <h4>[[command.title]]</h4>
-            <i>[[command.description]]</i>
-            <pre class="line-numbers"><code :class="'language-'+command.lang">[[command.text]]</code></pre>
-            
-        </div> -->
-
-        <div v-for="doc in active_category.documentations">
-            <hr>
-            <div class="list-group">
-                <a :href="'/documentation/view/'+doc.id" class="list-group-item list-group-item-action" aria-current="true">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">[[doc.title]]</h5>
-                        <!-- <small>3 days ago</small> -->
+        <div class="row">
+            <template v-for="doc in active_category.documentations">
+                <div class="card col-3 m-1" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">[[doc.title]]</h5>
+                        <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+                        <p class="card-text" v-if="doc.description">[[doc.description]]</p>
+                        <p class="card-text" v-else><i>No description</i></p>
+                        <a :href="'/documentation/view/'+doc.id" class="card-link btn btn-primary btn-sm"><i class="fa-solid fa-eye"></i></a>
+                        <button class="btn btn-secondary btn-sm" title="Edit document" data-bs-toggle="modal" :data-bs-target="'#edit-doc-'+doc.id">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn btn-warning btn-sm" title="Archive document">
+                            <i class="fa-solid fa-box-archive"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" title="Delete document">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
                     </div>
-                    <p class="mb-1" v-if="doc.description">[[doc.description]]</p>
-                    <p class="mb-1" v-else><i>No description</i></p>
-                    <!-- <small>And some small print.</small> -->
-                </a>
-            </div>
+                </div>
+                <editdoc :doc="doc"></editdoc>
+            </template>
         </div>
         
     </div>
@@ -106,8 +119,14 @@
 <script type="module">
     const {createApp, ref, onMounted, onUpdated, nextTick} = Vue
     import {message_list, display_toast, create_message} from '/static/js/toaster.js'
+    import editdoc from '/static/js/documentation/edit-doc.js'
+    import createdoc from '/static/js/documentation/create-doc.js'
     createApp({
         delimiters: ['[[', ']]'],
+        components:{
+            editdoc,
+            createdoc
+        },
         setup() {
             
             const active_category = ref()
@@ -153,10 +172,6 @@
             onMounted(() => {
                 fetch_current_category()
             })
-
-            // onUpdated(() => {
-            //     Prism.highlightAll()
-            // })
 
             return {
                 message_list,

@@ -31,6 +31,7 @@ elif args.recreate_db:
     with app.app_context():
         db.drop_all()
         db.create_all()
+        create_admin()
 elif args.delete_db:
     with app.app_context():
         db.drop_all()

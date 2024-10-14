@@ -41,6 +41,8 @@ class Documentation(db.Model):
             "title": self.title,
             "text": self.text,
             "description": self.description,
+            "creation_date": self.creation_date,
+            "last_modif": self.last_modif
             # "is_archived": self.is_archived,
             # "archived_date": self.archived_date
         }
@@ -91,11 +93,17 @@ class Category_Doc(db.Model):
     documentations = db.relationship('Documentation', backref='category_doc', lazy='dynamic', cascade="all, delete-orphan")
 
     def to_json(self):
-        return {
+        json_dict =  {
             "id": self.id,
             "name": self.name,
             "color": self.color
         }
+        loc = Category_Doc.query.join(Category_To_Category, Category_To_Category.parent_id==Category_Doc.id).filter_by(child_id=self.id).first()
+        json_dict["parent_category"] = {}
+        if loc:
+            json_dict["parent_category"] = loc.to_json()
+
+        return json_dict
     
 
 
@@ -142,8 +150,7 @@ class User(UserMixin, db.Model):
             "id": self.id, 
             "first_name": self.first_name, 
             "last_name": self.last_name, 
-            "email": self.email, 
-            "org_id": self.org_id, 
+            "email": self.email,
             "role_id": self.role_id
         }
 

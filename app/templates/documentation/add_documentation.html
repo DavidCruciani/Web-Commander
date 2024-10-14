@@ -56,17 +56,22 @@
             // }
 
             async function fetch_current_doc() {
-                const res = await fetch("/documentation/current")
-                if(await res.status==404 ){
-                    display_toast(res)
-                }else{
-                    let loc = await res.json()
-                    current_doc.value = loc["doc"]
-                }
-
                 let text = ""
-                if(current_doc.value){
-                    text = current_doc.value.text
+                
+                if('{{edit_mode}}' == 'True'){
+                    
+                    const res = await fetch("/documentation/current")
+                    if(await res.status==404 ){
+                        display_toast(res)
+                    }else{
+                        let loc = await res.json()
+                        current_doc.value = loc["doc"]
+                    }
+
+                    
+                    if(current_doc.value){
+                        text = current_doc.value.text
+                    }
                 }
                 init_esaymde(text)
             }

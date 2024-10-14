@@ -1,6 +1,6 @@
 from ..db_class.db import User
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from .form import LoginForm, EditUserFrom
+from .form import LoginForm, EditUserFrom, RegistrationForm
 from flask_login import (
     current_user,
     login_required,
@@ -57,6 +57,18 @@ def login():
         else:
             flash('Invalid email or password.', 'error')
     return render_template('account/login.html', form=form)
+
+@account_blueprint.route("/add_user", methods=['GET','POST'])
+@login_required
+def add_user():
+    """Add a new user"""
+    form = RegistrationForm()
+
+    if form.validate_on_submit():
+        form_dict = form_to_dict(form)
+        AccountModel.add_user_core(form_dict)
+        return redirect("/account")
+    return render_template("account/add_user.html", form=form)
 
 @account_blueprint.route('/logout')
 @login_required

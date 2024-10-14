@@ -47,7 +47,7 @@ def create_doc(request_json):
         description = request_json["description"]
     
     d = Documentation(
-        text=request_json["text"],
+        text="",
         description = description,
         title = request_json["title"],
         category_id=session["active_category_doc"],
@@ -67,8 +67,16 @@ def edit_doc(did, request_json):
     if doc.description != request_json["description"]:
         doc.description = request_json["description"]
 
-    doc.text = request_json["text"]
+    doc.last_modif = datetime.datetime.now(tz=datetime.timezone.utc)
 
+    db.session.commit()
+
+    return True
+
+def edit_doc_text(did, request_json):
+    doc = get_doc(did)
+
+    doc.text = request_json["text"]
     doc.last_modif = datetime.datetime.now(tz=datetime.timezone.utc)
 
     db.session.commit()
@@ -86,6 +94,10 @@ def delete_doc(did):
         db.session.commit()
     db.session.delete(doc)
     return True
+
+def download_md(doc):
+    """Download the markdown"""
+    return 
 
 
 #########

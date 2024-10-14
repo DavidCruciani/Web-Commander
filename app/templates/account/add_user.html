@@ -3,13 +3,13 @@
 -->
 {% extends 'base.html' %}
 {% import 'macros/form_macros.html' as f %}
+{% import 'macros/check_password.html' as check %}
 
 {% block content %}
+    <h2 class="ui dividing header">Create an account</h2>
+
     <form action="" method="post">
         {{ form.hidden_tag() }}
-        {% if not edit_mode %}
-            {{form.user_id}}
-        {%endif%}
         <div class="modal-body">
             <div class="row">
                 <div class="col">
@@ -27,12 +27,14 @@
                     {%endif%}
                 </div>
             </div>
-            <div class="mb-3">
-                {{form.email.label(class_="col-form-label")}}:
-                {{form.email(class_="form-control")}}
-                {% if form.email.errors %}
-                    <div style="color: red;">{{form.email.errors[0] | safe}}</div>
-                {%endif%}
+            <div class="row">
+                <div class="col">
+                    {{form.email.label(class_="col-form-label")}}:
+                    {{form.email(class_="form-control")}}
+                    {% if form.email.errors %}
+                        <div style="color: red;">{{form.email.errors[0] | safe}}</div>
+                    {%endif%}
+                </div>
             </div>
             <div class="row">
                 <div class="col">
@@ -54,5 +56,11 @@
                 {{form.submit(class='btn btn-primary')}}
             </div>
         </div>
-    </form>
+        </form>
+{% endblock %}
+
+{% block script %}
+    {% if not edit_mode %}
+        {{ check.password_check('password', 0) }}
+    {%endif%}
 {% endblock %}
