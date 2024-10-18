@@ -1,9 +1,8 @@
 import {display_toast} from '/static/js/toaster.js'
 export default {
     delimiters: ['[[', ']]'],
-    props: {
-	},
-	setup(props) {
+    emits: ['doc_created'],
+	setup(props,{emit}) {
 
         async function create_doc(){
 			// Add file to the task
@@ -25,6 +24,9 @@ export default {
 			)
 			if(await res.status == 200){
                 $("#modal-create-doc").modal("hide")
+                emit('doc_created', true)
+                $("#input-create-title").val("")
+                $("#textarea-create-description").val("")
 			}
 
 			await display_toast(res)

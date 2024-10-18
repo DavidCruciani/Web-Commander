@@ -1,7 +1,9 @@
 import datetime
 import json
 import os
+import shutil
 import uuid
+import zipfile
 from ..db_class.db import *
 from .. import db 
 from .. import category_common as CategoryModel
@@ -10,6 +12,7 @@ from werkzeug.utils import secure_filename
 from ..utils.utils import create_specific_dir
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+TEMP_FOLDER = os.path.join(os.getcwd(), "temp")
 FILE_FOLDER = os.path.join(UPLOAD_FOLDER, "files")
 
 def add_category(request_json):
@@ -26,6 +29,36 @@ def add_category(request_json):
     db.session.commit()
 
     return c
+
+def edit_category(cid, request_json):
+    c = get_category(cid)
+
+    c.name = request_json["name"]
+    c.color = request_json["color"]
+    db.session.commit()
+    return True
+
+def delete_category(cid):
+    c = get_category(cid)
+
+    ### Delete all children
+    c_t_c = Category_To_Category.query.filter_by(parent_id=cid).all()
+    for loc_c in c_t_c:
+        cat_del = get_category(loc_c.child_id)
+        db.session.delete(cat_del)
+        # Category_Doc.query.filter_by(id=loc_c.child_id).delete()
+        db.session.delete(loc_c)
+        db.session.commit()
+    
+    ### Delete link to parent
+    c_t_c = Category_To_Category.query.filter_by(child_id=cid).first()
+    if c_t_c:
+        db.session.delete(c_t_c)
+        db.session.commit()
+
+    db.session.delete(c)
+    db.session.commit()
+    return True
 
 
 def get_categories():
@@ -95,10 +128,28 @@ def delete_doc(did):
     db.session.delete(doc)
     return True
 
-def download_md(doc):
-    """Download the markdown"""
-    return 
+def download_all(did):
+    doc = get_doc(did)
+    create_specific_dir(TEMP_FOLDER)
+    zf = zipfile.ZipFile(os.path.join(TEMP_FOLDER, f'{doc.title.replace(" ", "_")}.zip'), mode="w")
+    try:
+        for file in doc.files:
+            zf.write(os.path.join(FILE_FOLDER, file.uuid), file.name, compress_type=zipfile.ZIP_DEFLATED)
+        zf.writestr(f'{doc.title.replace(" ", "_")}.md', doc.text,compress_type=zipfile.ZIP_DEFLATED)
 
+    except FileNotFoundError:
+        return False
+    finally:
+        zf.close()
+    
+    return True
+
+def download_zip(doc_title):
+    return send_file(os.path.join(TEMP_FOLDER, f'{doc_title.replace(" ", "_")}.zip'), as_attachment=True)
+
+def delete_temp_folder():
+    """Delete temp folder"""
+    shutil.rmtree(TEMP_FOLDER)
 
 #########
 # Files #

@@ -27,6 +27,9 @@
             <button class="btn btn-primary" title="Edit document" data-bs-toggle="modal" :data-bs-target="'#edit-doc-'+current_doc.id">
                 <i class="fa-solid fa-pen-to-square"></i>
             </button>
+            <a class="btn btn-secondary" title="Download all in zip" :href="'/documentation/'+current_doc.id+'/download_all'">
+                <i class="fa-solid fa-download"></i>
+            </a>
             <!-- <button class="btn btn-warning" title="Archive document" data-bs-toggle="modal" :data-bs-target="'#edit-doc-'+current_doc.id"> -->
             <button class="btn btn-warning" title="Archive document">
                 <i class="fa-solid fa-box-archive"></i>
@@ -34,6 +37,7 @@
             <button class="btn btn-danger" title="Delete document" data-bs-toggle="modal" data-bs-target="#delete_doc">
                 <i class="fa-solid fa-trash"></i>
             </button>
+            
         </div>
         
 
@@ -166,7 +170,7 @@
             async function delete_doc() {
                 const res = await fetch('/documentation/' + current_doc.value.id + '/delete')
                 if(await res.status == 200){
-                    window.location.replace='/documentation'
+                    window.location.replace('/documentation')
                 }
                 display_toast(res)
             }
@@ -236,7 +240,8 @@
                 formatNow,
                 endOf,
                 edit_mode_change,
-                save_change_easymd
+                save_change_easymd,
+                delete_doc
             }
         }
     }).mount('.container-fluid')

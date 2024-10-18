@@ -74,8 +74,26 @@ def add_category():
     if "name" in request.json:
         if DocModel.add_category(request.json):
             return {"message": "All good", "toast_class": "success-subtle"}, 200
-        return {"message": "Something goes wrong", "toast_class": "danger-subtle"}, 400
+        return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
     return {"message": "Give a name, now !", "toast_class": "danger-subtle"}, 400
+
+@documentation_blueprint.route("/category/<cid>/edit", methods=['POST'])
+def edit_category(cid):
+    if DocModel.get_category(cid):
+        if "name" in request.json:
+            if DocModel.edit_category(cid, request.json):
+                return {"message": "All good", "toast_class": "success-subtle"}, 200
+            return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
+        return {"message": "Give a name, now !", "toast_class": "danger-subtle"}, 400
+    return {"message": "Category not found", "toast_class": "danger-subtle"}, 404
+
+@documentation_blueprint.route("/category/<cid>/delete", methods=['GET'])
+def delete_category(cid):
+    if DocModel.get_category(cid):
+        if DocModel.delete_category(cid):
+            return {"message": "All good", "toast_class": "success-subtle"}, 200
+        return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
+    return {"message": "Category not found", "toast_class": "danger-subtle"}, 404
 
 @documentation_blueprint.route("/root_categories", methods=['GET'])
 def categories():
@@ -110,8 +128,15 @@ def add_sub_category(cid):
     if "name" in request.json:
         if CategoryModel.add_sub_category(cid, request.json, is_doc=True, get_category=DocModel.get_category):
             return {"message": "All good", "toast_class": "success-subtle"}, 200
-        return {"message": "Something goes wrong", "toast_class": "danger-subtle"}, 400
+        return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
     return {"message": "Give a name, now !", "toast_class": "danger-subtle"}, 400
+
+@documentation_blueprint.route("/category/<cid>/documentations", methods=['GET'])
+def documentations(cid):
+    cat = DocModel.get_category(cid)
+    if cat:
+        return {"cat": [c.to_json() for c in cat.documentations]}
+    return {"message": "Doc not found", "toast_class": "danger-subtle"}, 404
 
 
 
@@ -159,6 +184,18 @@ def download(did):
         return doc.text, 200, {'Content-Disposition': f'attachment; filename={loc_title}.md'}
     return {"message": "Doc not found", "toast_class": "danger-subtle"}, 404
 
+@documentation_blueprint.route("/<did>/download_all", methods=['GET'])
+def download_all(did):
+    doc = DocModel.get_doc(did)
+    if doc:
+        if DocModel.download_all(did):
+            res = DocModel.download_zip(doc.title)
+            if res:
+                DocModel.delete_temp_folder()
+            return res
+        return {"message": "Zip error", "toast_class": "warning-subtle"}, 400
+    return {"message": "Doc not found", "toast_class": "danger-subtle"}, 404
+
 #########
 # Files #
 #########
@@ -177,7 +214,7 @@ def add_files(did):
         if len(request.files) > 0:
             if DocModel.add_file_core(doc_id=did, files_list=request.files):
                 return {"message":"Files added", "toast_class": "success-subtle"}, 200
-            return {"message":"Something goes wrong adding files", "toast_class": "danger-subtle"}, 400
+            return {"message":"Something went wrong adding files", "toast_class": "danger-subtle"}, 400
         return {"message":"No Files given", "toast_class": "warning-subtle"}, 400
     return {"message":"Doc not found", "toast_class": "danger-subtle"}, 404
 

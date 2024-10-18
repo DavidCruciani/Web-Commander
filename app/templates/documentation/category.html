@@ -6,14 +6,86 @@
 
 {% block content %}
     
-    <h1>Documentation</h1>
-    <hr>
+    <div v-if="active_category">
+        <div class="d-flex">
+            <h1>[[active_category.name]]</h1>
+            <div style="margin-left: 5px;">
+                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#edit-category">
+                    <i class="fa fa-pen-to-square"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delete-category" style="margin-left: 1px;">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </div>
 
-    
-    <button v-if="active_category && !active_category.parent_category.id" type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#add-sub-category">
-        New sub cat
-    </button>
-     
+        <!-- Modal Edit Category -->
+        <div class="modal fade" id="edit-category" tabindex="-1" aria-labelledby="edit-categoryLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="edit-categoryLabel">Edit the Category</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-floating col">
+                                <input class="form-control" id="input-edit-category" type="text" :value="active_category.name"></input>
+                                <label>Name</label>
+                            </div>
+                            <div id="error-edit-category" style="color: brown;"></div>
+                            <div class="form-floating col">
+                                <input class="form-control" id="input-choose-color" type="color" :value="active_category.color"></input>
+                                <label>Color</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="edit_cat()">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Delete Category -->
+        <div class="modal fade" id="delete-category" tabindex="-1" aria-labelledby="edit-categoryLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="edit-categoryLabel">Delete the Category</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        This will delete all sub categories, all documentation and all files...
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" @click="delete_cat()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Breadcrumb -->
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="btn btn-link p-0" href="/documentation">Home</a></li>
+                <li class="breadcrumb-item" v-if="active_category.parent_category.name">
+                    <a class="btn btn-link p-0" :href="'/documentation/category/'+active_category.parent_category.id">
+                        [[active_category.parent_category.name]]
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">[[active_category.name]]</li>
+            </ol>
+        </nav>
+        <hr>
+    </div>
+
     
     <!-- Modal sub Add Category -->
     <div class="modal fade" v-if="active_category && !active_category.parent_category.id" id="add-sub-category" tabindex="-1" aria-labelledby="add-sub-categoryLabel" aria-hidden="true">
@@ -49,51 +121,46 @@
     <!--  -->
 
     <div v-if="active_category">
-        <!-- Breadcrumb -->
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a class="btn btn-link p-0" href="/documentation">Home</a></li>
-                <li class="breadcrumb-item" v-if="active_category.parent_category.name">
-                    <a class="btn btn-link p-0" :href="'/documentation/category/'+active_category.parent_category.id">
-                        [[active_category.parent_category.name]]
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">[[active_category.name]]</li>
-            </ol>
-        </nav>
-
-        <div class="d-flex">
-            <h4 style="margin-right: 4px;">[[active_category.name]]</h4>
-            <!-- <a type="button" class="btn btn-outline-primary" href="/documentation/add_documentation">
+        <div v-if="!active_category.parent_category.id" class="d-flex mb-1">
+            <h4 class="me-2"><u>Sub categories</u></h4>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#add-sub-category">
                 <i class="fa-solid fa-plus"></i>
-            </a> -->
+            </button>
+        </div>
+        <div v-if="active_category.subcats.length">
+            <div v-for="subcat in active_category.subcats" class="row">
+                <a :href="'/documentation/category/'+subcat.id">
+                    <div class="col-4 subcat-block">
+                        [[subcat.name]]
+                    </div>
+                </a>
+            </div>
+        </div>
+        <hr v-if="!active_category.parent_category.id">
+        
+        <div class="d-flex">
+            <h4 class="me-2"><u>Doc part</u></h4>
             <button class="btn btn-outline-primary" title="Create document" data-bs-toggle="modal" data-bs-target="#modal-create-doc">
                 <i class="fa-solid fa-plus"></i>
-            </button>            
+            </button>
         </div>
-
-        <createdoc></createdoc>
-
-        <hr>
-        <div v-if="active_category.subcats.length">
-            <h6>Sub categories</h6>
-            <div v-for="subcat in active_category.subcats" class="row">
-                <div class="col-4 subcat-block">
-                    <a :href="'/documentation/category/'+subcat.id">[[subcat.name]]</a>
-                </div>
-            </div>
-            <hr>
-        </div>
-        
+        <createdoc @doc_created="get_new_doc()"></createdoc>
 
         <div class="row">
             <template v-for="doc in active_category.documentations">
-                <div class="card col-3 m-1" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">[[doc.title]]</h5>
-                        <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
-                        <p class="card-text" v-if="doc.description">[[doc.description]]</p>
-                        <p class="card-text" v-else><i>No description</i></p>
+                <div class="col-auto m-1 d-flex">
+                    <div class="card" style="min-width: 200px;">
+                        <div class="card-body">
+                            <div>
+                                <a :href="'/documentation/view/'+doc.id" style="text-decoration: none; color: black;"><h5 class="card-title">[[doc.title]]</h5></a>
+                                <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+                                <p class="card-text" v-if="doc.description">[[doc.description]]</p>
+                                <p class="card-text" v-else><i>No description</i></p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div style="display: grid;">
                         <a :href="'/documentation/view/'+doc.id" class="card-link btn btn-primary btn-sm"><i class="fa-solid fa-eye"></i></a>
                         <button class="btn btn-secondary btn-sm" title="Edit document" data-bs-toggle="modal" :data-bs-target="'#edit-doc-'+doc.id">
                             <i class="fa-solid fa-pen-to-square"></i>
@@ -101,12 +168,32 @@
                         <button class="btn btn-warning btn-sm" title="Archive document">
                             <i class="fa-solid fa-box-archive"></i>
                         </button>
-                        <button class="btn btn-danger btn-sm" title="Delete document">
+                        <button class="btn btn-danger btn-sm" title="Delete document" data-bs-toggle="modal" :data-bs-target="'#delete-doc-'+doc.id">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
                 </div>
                 <editdoc :doc="doc"></editdoc>
+
+                <!-- Modal delete doc -->
+                <div class="modal fade" :id="'delete-doc-'+doc.id" tabindex="-1" aria-labelledby="delete_doc_modal" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Delete '[[doc.title]]' ?</h1>
+                                
+                                <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>This will delete all your files...</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button class="btn btn-danger btn-sm"  @click="delete_doc(doc.id)"><i class="fa-solid fa-trash"></i> Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </template>
         </div>
         
@@ -139,15 +226,13 @@
                     let loc = await res.json()
                     active_category.value = loc["category"]
                 }
-                await nextTick()
-                Prism.highlightAll()
             }
 
             async function add_new_sub_cat() {
                 $("#error-add-sub-category").text("")
                 let loc_cat = $("#input-add-sub-category").val()
                 if(!loc_cat){
-                    $("#error-add-category").text("Need a name")
+                    $("#error-add-sub-category").text("Need a name")
                 }else{
                     let url = "/documentation/category/"+active_category.value.id+"/add_sub_category"
                     const res = await fetch(url, {
@@ -168,6 +253,69 @@
                 }
             }
 
+            async function edit_cat() {
+                $("#error-edit-category").text("")
+                let loc_cat = $("#input-edit-category").val()
+                let loc_color = $("#input-choose-color").val()
+                if(!loc_cat){
+                    $("#error-edit-category").text("Need a name")
+                }else{
+                    let url = "/documentation/category/"+active_category.value.id+"/edit"
+                    const res = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": $("#csrf_token").val(), "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "name": loc_cat,
+                            "color": loc_color
+                        })
+                    });
+                    if(await res.status==200){
+                        active_category.value.name = loc_cat
+                        active_category.value.color = loc_color
+                        $("#edit-category").modal("hide")
+                    }
+                    display_toast(res)
+                }
+            }
+
+            async function delete_cat() {
+                const res = await fetch("/documentation/category/"+active_category.value.id+"/delete")
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    window.location.replace("/documentation")
+                }
+            }
+
+            async function get_new_doc() {
+                const res = await fetch("/documentation/category/"+active_category.value.id+"/documentations")
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    let loc = await res.json()
+                    active_category.value.documentations = loc["cat"]
+                }
+            }
+
+            async function delete_doc(doc_id) {
+                const res = await fetch('/documentation/' + doc_id + '/delete')
+                if(await res.status == 200){
+                    $("#delete-doc-"+doc_id).modal("hide")
+                    // delete from list
+                    let loc
+                    for(let i in active_category.value.documentations ){
+                        if(active_category.value.documentations[i].id ==doc_id){
+                            loc = i
+                            break
+                        }
+                    }
+                    active_category.value.documentations.splice(loc,1)
+                }
+                display_toast(res)
+            }
+
 
             onMounted(() => {
                 fetch_current_category()
@@ -178,7 +326,11 @@
                 active_category,
 
 
-                add_new_sub_cat
+                add_new_sub_cat,
+                edit_cat,
+                delete_cat,
+                get_new_doc,
+                delete_doc
             }
         }
     }).mount('.container-fluid')
