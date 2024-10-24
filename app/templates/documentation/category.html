@@ -118,19 +118,19 @@
         </div>
     </div>
 
-    <!--  -->
 
     <div v-if="active_category">
+        <!-- List sub categories -->
         <div v-if="!active_category.parent_category.id" class="d-flex mb-1">
             <h4 class="me-2"><u>Sub categories</u></h4>
             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#add-sub-category">
                 <i class="fa-solid fa-plus"></i>
             </button>
         </div>
-        <div v-if="active_category.subcats.length">
-            <div v-for="subcat in active_category.subcats" class="row">
+        <div v-if="active_category.subcats.length" class="row">
+            <div v-for="subcat in active_category.subcats" class="col-auto">
                 <a :href="'/documentation/category/'+subcat.id">
-                    <div class="col-4 subcat-block">
+                    <div class="subcat-block">
                         [[subcat.name]]
                     </div>
                 </a>
@@ -143,10 +143,16 @@
             <button class="btn btn-outline-primary" title="Create document" data-bs-toggle="modal" data-bs-target="#modal-create-doc">
                 <i class="fa-solid fa-plus"></i>
             </button>
+            <!-- Search bar -->
+            <div class="input-group w-auto translate-middle-x" style="left: 40%">
+                <input autocomplete="off" @input="onInput" type="search" class="form-control rounded" placeholder='Search documentation by title' style="min-width: 400px;" />
+            </div>
+            <!-- Search bar -->
         </div>
         <createdoc @doc_created="get_new_doc()"></createdoc>
 
-        <div class="row">
+        <!-- List docs -->
+        <div class="row mt-3">
             <template v-for="doc in active_category.documentations">
                 <div class="col-auto m-1 d-flex">
                     <div class="card" style="min-width: 200px;">
@@ -217,6 +223,7 @@
         setup() {
             
             const active_category = ref()
+            let loc_doc_list = []
 
             async function fetch_current_category() {
                 const res = await fetch("/documentation/category/current")
@@ -225,6 +232,7 @@
                 }else{
                     let loc = await res.json()
                     active_category.value = loc["category"]
+                    loc_doc_list = active_category.value.documentations
                 }
             }
 
@@ -316,6 +324,17 @@
                 display_toast(res)
             }
 
+            async function onInput(e){
+                active_category.value.documentations = []
+                if(e.target.value){
+                    active_category.value.documentations = loc_doc_list.filter((doc) => {
+                        return doc.title.toLowerCase().includes(e.target.value.toLowerCase())
+                    })
+                }else{
+                    active_category.value.documentations = loc_doc_list
+                }
+            }
+
 
             onMounted(() => {
                 fetch_current_category()
@@ -330,7 +349,8 @@
                 edit_cat,
                 delete_cat,
                 get_new_doc,
-                delete_doc
+                delete_doc,
+                onInput
             }
         }
     }).mount('.container-fluid')

@@ -63,16 +63,24 @@ class File(db.Model):
     
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uuid = db.Column(db.String(36))
     name = db.Column(db.String)
     color = db.Column(db.String(), index=True)
     commands = db.relationship('Command', backref='category', lazy='dynamic', cascade="all, delete-orphan")
 
     def to_json(self):
-        return {
+        json_dict =  {
             "id": self.id,
+            "uuid": self.uuid,
             "name": self.name,
             "color": self.color
         }
+        loc = Category.query.join(Category_To_Category, Category_To_Category.parent_id==Category.id).filter_by(child_id=self.id).first()
+        json_dict["parent_category"] = {}
+        if loc:
+            json_dict["parent_category"] = loc.to_json()
+
+        return json_dict
     
 class Category_To_Category(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -86,8 +94,21 @@ class Category_To_Category(db.Model):
             "child_id": self.child_id
         }
     
+class Category_To_Category_Doc(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    parent_id = db.Column(db.Integer, index=True)
+    child_id = db.Column(db.Integer, index=True)
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "parent_id": self.parent_id,
+            "child_id": self.child_id
+        }
+    
 class Category_Doc(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    uuid = db.Column(db.String(36))
     name = db.Column(db.String)
     color = db.Column(db.String(), index=True)
     documentations = db.relationship('Documentation', backref='category_doc', lazy='dynamic', cascade="all, delete-orphan")
@@ -95,6 +116,7 @@ class Category_Doc(db.Model):
     def to_json(self):
         json_dict =  {
             "id": self.id,
+            "uuid": self.uuid,
             "name": self.name,
             "color": self.color
         }

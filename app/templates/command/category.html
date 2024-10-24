@@ -4,23 +4,100 @@
 
 {% extends 'base.html' %}
 
-{% block content %}
-    
-    <h1>Command</h1>
-    <hr>
+{% block head %}
+<script src="{{ url_for('static',filename='js/prism.js') }}" data-manual></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/prism.css') }}">
+<script src="{{ url_for('static',filename='js/editor.js') }}"></script>
 
-    
-    <button v-if="active_category" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-sub-category">
-        New sub cat
-    </button>
-     
-    
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+    <div v-if="active_category">
+        <div class="d-flex">
+            <h1>[[active_category.name]]</h1>
+            <div style="margin-left: 5px;">
+                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#edit-category">
+                    <i class="fa fa-pen-to-square"></i>
+                </button>
+                <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delete-category" style="margin-left: 1px;">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Edit Category -->
+        <div class="modal fade" id="edit-category" tabindex="-1" aria-labelledby="edit-categoryLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="edit-categoryLabel">Edit the Category</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-floating col">
+                                <input class="form-control" id="input-edit-category" type="text" :value="active_category.name"></input>
+                                <label>Name</label>
+                            </div>
+                            <div id="error-edit-category" style="color: brown;"></div>
+                            <div class="form-floating col">
+                                <input class="form-control" id="input-choose-color" type="color" :value="active_category.color"></input>
+                                <label>Color</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="edit_cat()">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Delete Category -->
+        <div class="modal fade" id="delete-category" tabindex="-1" aria-labelledby="edit-categoryLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="edit-categoryLabel">Delete the Category</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        This will delete all sub categories and commands...
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" @click="delete_cat()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a class="btn btn-link p-0" href="/command">Home</a></li>
+                <li class="breadcrumb-item" v-if="active_category.parent_category.name">
+                    <a class="btn btn-link p-0" :href="'/command/category/'+active_category.parent_category.id">
+                        [[active_category.parent_category.name]]
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">[[active_category.name]]</li>
+            </ol>
+        </nav>
+        <hr>
+    </div>
     <!-- Modal sub Add Category -->
-    <div class="modal fade" id="add-sub-category" tabindex="-1" aria-labelledby="add-sub-categoryLabel" aria-hidden="true">
+    <div class="modal fade" v-if="active_category && !active_category.parent_category.id" id="add-sub-category" tabindex="-1" aria-labelledby="add-sub-categoryLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="add-sub-categoryLabel">Add a Category</h1>
+                    <h1 class="modal-title fs-5" id="add-sub-categoryLabel">Add a Sub Category</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -45,44 +122,64 @@
             </div>
         </div>
     </div>
-
-    <br>
-    <br>
-    <!--  -->
+    
+    
 
     <div v-if="active_category">
-        <!-- Breadcrumb -->
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a class="btn btn-link p-0" href="/command">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">[[active_category.name]]</li>
-            </ol>
-        </nav>
-
-        <div class="d-flex">
-            <h4>[[active_category.name]]</h4>
-            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-create-command">
+         <!-- List sub categories -->
+         <div v-if="!active_category.parent_category.id" class="d-flex mb-1">
+            <h4 class="me-2"><u>Sub categories</u></h4>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#add-sub-category">
                 <i class="fa-solid fa-plus"></i>
-            </button>              
+            </button>
         </div>
-
-        <hr>
-        <h6>Sub categories</h6>
-        <div v-for="subcat in active_category.subcats" class="row">
-            <div class="col-4 subcat-block">
-                <a :href="'/command/category/'+active_category.id+'/subcategory/'+subcat.id">[[subcat.name]]</a>
+        <div v-if="active_category.subcats.length" class="row">
+            <div v-for="subcat in active_category.subcats" class="col-auto">
+                <a :href="'/command/category/'+subcat.id">
+                    <div class="subcat-block">
+                        [[subcat.name]]
+                    </div>
+                </a>
             </div>
         </div>
+        <hr v-if="!active_category.parent_category.id">
 
-        <div v-for="command in active_category.commands">
-            <hr>
-            <h4>[[command.title]]</h4>
-            <i>[[command.description]]</i>
-            <pre class="line-numbers"><code :class="'language-'+command.lang">[[command.text]]</code></pre>
-            
-        </div>
         
-        <create_command :category="active_category"></create_command>
+        <div class="d-flex">
+            <h4 class="me-2"><u>Command part</u></h4>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-create-command">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+            <!-- Search bar -->
+            <div class="input-group w-auto translate-middle-x" style="left: 40%">
+                <input autocomplete="off" @input="onInput" type="search" class="form-control rounded" placeholder='Search command by title' style="min-width: 400px;" />
+            </div>
+            <!-- Search bar -->
+        </div>
+        <create_command :category="active_category" @command_created="get_new_command()"></create_command>
+
+        <template v-for="command in active_category.commands">
+            <div class="command-card">
+                <!-- <hr> -->
+                <div class="d-flex">
+                    <h4>
+                        [[command.title]]
+                    </h4>
+                    <div style="position: absolute; right: 0; margin-right: 8px;">
+                        <button class="btn btn-outline-primary" data-bs-toggle="modal" :data-bs-target="'#modal-edit-command-'+command.id">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button class="btn btn-outline-danger" @click="delete_command(command.id)">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <i>[[command.description]]</i>
+                <pre class="line-numbers"><code :class="'language-'+command.lang">[[command.text]]</code></pre>
+            </div>
+
+            <edit_command :command="command" @command_edited="(msg) => command = msg"></edit_command>
+        </template>
     </div>
   
 
@@ -100,14 +197,17 @@
     const {createApp, ref, onMounted, onUpdated, nextTick} = Vue
     import {message_list, display_toast, create_message} from '/static/js/toaster.js'
     import create_command from '/static/js/command/create_command.js'
+    import edit_command from '/static/js/command/edit_command.js'
     createApp({
         delimiters: ['[[', ']]'],
         components : {
-            create_command
+            create_command,
+            edit_command
         },
         setup() {
             
             const active_category = ref()
+            let loc_command_list = []
 
             async function fetch_current_category() {
                 const res = await fetch("/command/category/current")
@@ -116,6 +216,7 @@
                 }else{
                     let loc = await res.json()
                     active_category.value = loc["category"]
+                    loc_command_list = active_category.value.commands
                 }
                 await nextTick()
                 Prism.highlightAll()
@@ -146,6 +247,82 @@
                 }
             }
 
+            async function edit_cat() {
+                $("#error-edit-category").text("")
+                let loc_cat = $("#input-edit-category").val()
+                let loc_color = $("#input-choose-color").val()
+                if(!loc_cat){
+                    $("#error-edit-category").text("Need a name")
+                }else{
+                    let url = "/command/category/"+active_category.value.id+"/edit"
+                    const res = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": $("#csrf_token").val(), "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "name": loc_cat,
+                            "color": loc_color
+                        })
+                    });
+                    if(await res.status==200){
+                        active_category.value.name = loc_cat
+                        active_category.value.color = loc_color
+                        $("#edit-category").modal("hide")
+                    }
+                    display_toast(res)
+                }
+            }
+
+            async function delete_cat() {
+                const res = await fetch("/command/category/"+active_category.value.id+"/delete")
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    window.location.replace("/command")
+                }
+            }
+
+            async function get_new_command() {
+                const res = await fetch("/command/category/"+active_category.value.id+"/commands")
+                if(await res.status==404 ){
+                    display_toast(res)
+                }else{
+                    let loc = await res.json()
+                    active_category.value.commands = loc["commands"]
+                    await nextTick()
+                    Prism.highlightAll()
+                }
+            }
+
+            async function delete_command(cid) {
+                const res = await fetch("/command/"+cid+"/delete")
+                if(await res.status==200 ){
+                    let loc
+                    for(let i in active_category.value.commands){
+                        if(active_category.value.commands[i].id==cid){
+                            loc = i
+                            break
+                        }
+                    }
+                    active_category.value.commands.splice(loc, 1)
+                }
+                display_toast(res)
+            }
+
+            async function onInput(e){
+                active_category.value.commands = []
+                if(e.target.value){
+                    active_category.value.commands = loc_command_list.filter((command) => {
+                        return command.title.toLowerCase().includes(e.target.value.toLowerCase())
+                    })
+                }else{
+                    active_category.value.commands = loc_command_list
+                }
+                await nextTick()
+                Prism.highlightAll()
+            }
+
 
             onMounted(() => {
                 fetch_current_category()
@@ -160,7 +337,12 @@
                 active_category,
 
 
-                add_new_sub_cat
+                add_new_sub_cat,
+                edit_cat,
+                delete_cat,
+                get_new_command,
+                delete_command,
+                onInput
             }
         }
     }).mount('.container-fluid')

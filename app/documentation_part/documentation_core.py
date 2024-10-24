@@ -1,12 +1,10 @@
 import datetime
-import json
 import os
 import shutil
 import uuid
 import zipfile
 from ..db_class.db import *
 from .. import db 
-from .. import category_common as CategoryModel
 from flask import session, request, send_file
 from werkzeug.utils import secure_filename
 from ..utils.utils import create_specific_dir
@@ -14,58 +12,8 @@ from ..utils.utils import create_specific_dir
 UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
 TEMP_FOLDER = os.path.join(os.getcwd(), "temp")
 FILE_FOLDER = os.path.join(UPLOAD_FOLDER, "files")
+IMAGE_FOLDER = os.path.join("app", "static", "images")
 
-def add_category(request_json):
-    color = ""
-    if "color" in request_json:
-        color = request_json["color"]
-    
-    c = Category_Doc(
-        name=request_json["name"],
-        color=color
-    )
-
-    db.session.add(c)
-    db.session.commit()
-
-    return c
-
-def edit_category(cid, request_json):
-    c = get_category(cid)
-
-    c.name = request_json["name"]
-    c.color = request_json["color"]
-    db.session.commit()
-    return True
-
-def delete_category(cid):
-    c = get_category(cid)
-
-    ### Delete all children
-    c_t_c = Category_To_Category.query.filter_by(parent_id=cid).all()
-    for loc_c in c_t_c:
-        cat_del = get_category(loc_c.child_id)
-        db.session.delete(cat_del)
-        # Category_Doc.query.filter_by(id=loc_c.child_id).delete()
-        db.session.delete(loc_c)
-        db.session.commit()
-    
-    ### Delete link to parent
-    c_t_c = Category_To_Category.query.filter_by(child_id=cid).first()
-    if c_t_c:
-        db.session.delete(c_t_c)
-        db.session.commit()
-
-    db.session.delete(c)
-    db.session.commit()
-    return True
-
-
-def get_categories():
-    return Category_Doc.query.all()
-
-def get_category(cid):
-    return Category_Doc.query.get(cid)
 
 def get_doc(did):
     return Documentation.query.get(did)
@@ -150,6 +98,22 @@ def download_zip(doc_title):
 def delete_temp_folder():
     """Delete temp folder"""
     shutil.rmtree(TEMP_FOLDER)
+
+
+def upload_image(files_list):
+    create_specific_dir(IMAGE_FOLDER)
+    loc_file = list(files_list.keys())[0]
+    if files_list[loc_file].filename:
+        uuid_loc = str(uuid.uuid4())
+        # filename = secure_filename(files_list[file].filename)
+        try:
+            file_data = request.files[loc_file].read()
+            with open(os.path.join(IMAGE_FOLDER, uuid_loc), "wb") as write_file:
+                write_file.write(file_data)
+        except Exception as e:
+            print(e)
+            return False
+    return "/static/images/"+uuid_loc
 
 #########
 # Files #

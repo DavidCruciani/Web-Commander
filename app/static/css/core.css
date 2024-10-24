@@ -55,12 +55,12 @@ span#goTop, span#project-version{
 	text-align: center;
 }
 
-.code-display {
-	background-color: #000000e3;
-  	color: white;
+
+.command-card{
+	background-color: white;
+	filter: drop-shadow(rgba(50, 50, 0, 0.5) 1px 1px 2px);
+	border: 1px solid #dee2e6;
 	border-radius: 5px;
-	filter: drop-shadow(rgba(50, 50, 0, 0.5) -1px 3px 2px);
+	padding: 10px;
+	margin-top: 50px;
 }
-
-
-

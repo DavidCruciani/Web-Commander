@@ -35,6 +35,7 @@ def edit_documentation(did):
 
 @documentation_blueprint.route("/create", methods=['POST'])
 def create():
+    """Create a doc"""
     if "title" in request.json:
         d = DocModel.create_doc(request.json)
         if d:
@@ -72,16 +73,16 @@ def edit_text(did):
 @documentation_blueprint.route("/add_category", methods=['POST'])
 def add_category():
     if "name" in request.json:
-        if DocModel.add_category(request.json):
+        if CategoryModel.add_category(request.json, is_doc=True):
             return {"message": "All good", "toast_class": "success-subtle"}, 200
         return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
     return {"message": "Give a name, now !", "toast_class": "danger-subtle"}, 400
 
 @documentation_blueprint.route("/category/<cid>/edit", methods=['POST'])
 def edit_category(cid):
-    if DocModel.get_category(cid):
+    if CategoryModel.get_category(cid, is_doc=True):
         if "name" in request.json:
-            if DocModel.edit_category(cid, request.json):
+            if CategoryModel.edit_category(cid, request.json, is_doc=True):
                 return {"message": "All good", "toast_class": "success-subtle"}, 200
             return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
         return {"message": "Give a name, now !", "toast_class": "danger-subtle"}, 400
@@ -89,19 +90,19 @@ def edit_category(cid):
 
 @documentation_blueprint.route("/category/<cid>/delete", methods=['GET'])
 def delete_category(cid):
-    if DocModel.get_category(cid):
-        if DocModel.delete_category(cid):
+    if CategoryModel.get_category(cid, is_doc=True):
+        if CategoryModel.delete_category(cid, is_doc=True):
             return {"message": "All good", "toast_class": "success-subtle"}, 200
         return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
     return {"message": "Category not found", "toast_class": "danger-subtle"}, 404
 
 @documentation_blueprint.route("/root_categories", methods=['GET'])
 def categories():
-    return {"categories": CategoryModel.get_root_categories_json(DocModel.get_categories)}, 200
+    return {"categories": CategoryModel.get_root_categories_json(is_doc=True)}, 200
 
 @documentation_blueprint.route("/category/<cid>", methods=['GET'])
 def category_page(cid):
-    if DocModel.get_category(cid):
+    if CategoryModel.get_category(cid, is_doc=True):
         session["active_category_doc"] = cid
         session["current_doc"] = ""
         return render_template("documentation/category.html")
@@ -109,7 +110,7 @@ def category_page(cid):
 
 @documentation_blueprint.route("/category/current", methods=['GET'])
 def current_category():
-    cat = DocModel.get_category(session["active_category_doc"])
+    cat = CategoryModel.get_category(session["active_category_doc"], is_doc=True)
     cat_json = cat.to_json()
 
     doc_list = []
@@ -118,7 +119,7 @@ def current_category():
 
     cat_json["documentations"] = doc_list
 
-    subcat_list = CategoryModel.get_subcategory_json(cat.id, DocModel.get_category)
+    subcat_list = CategoryModel.get_subcategory_json(cat.id, is_doc=True)
     cat_json["subcats"] = subcat_list
 
     return {"category": cat_json}
@@ -126,17 +127,17 @@ def current_category():
 @documentation_blueprint.route("/category/<cid>/add_sub_category", methods=['POST'])
 def add_sub_category(cid):
     if "name" in request.json:
-        if CategoryModel.add_sub_category(cid, request.json, is_doc=True, get_category=DocModel.get_category):
+        if CategoryModel.add_sub_category(cid, request.json, is_doc=True):
             return {"message": "All good", "toast_class": "success-subtle"}, 200
         return {"message": "Something went wrong", "toast_class": "danger-subtle"}, 400
     return {"message": "Give a name, now !", "toast_class": "danger-subtle"}, 400
 
 @documentation_blueprint.route("/category/<cid>/documentations", methods=['GET'])
 def documentations(cid):
-    cat = DocModel.get_category(cid)
+    cat = CategoryModel.get_category(cid, is_doc=True)
     if cat:
         return {"cat": [c.to_json() for c in cat.documentations]}
-    return {"message": "Doc not found", "toast_class": "danger-subtle"}, 404
+    return {"message": "Category not found", "toast_class": "danger-subtle"}, 404
 
 
 
@@ -154,7 +155,7 @@ def doc_by_id(did):
     doc = DocModel.get_doc(did)
     if doc:
         loc_doc = doc.to_json()
-        loc_doc["category"] = DocModel.get_category(doc.category_id).to_json()
+        loc_doc["category"] = CategoryModel.get_category(doc.category_id, is_doc=True).to_json()
         return {"doc": loc_doc}, 200
     return {"message": "Doc not found", "toast_class": "danger-subtle"}, 404
 
@@ -195,6 +196,16 @@ def download_all(did):
             return res
         return {"message": "Zip error", "toast_class": "warning-subtle"}, 400
     return {"message": "Doc not found", "toast_class": "danger-subtle"}, 404
+
+
+@documentation_blueprint.route("/upload_image", methods=['POST'])
+def upload_image():
+    print(request.files)
+    res = DocModel.upload_image(request.files)
+    if res:
+        return {"data": {"filePath": res}}, 200
+    return {"error": "123"}
+
 
 #########
 # Files #
