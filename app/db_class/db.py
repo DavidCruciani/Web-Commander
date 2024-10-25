@@ -120,7 +120,7 @@ class Category_Doc(db.Model):
             "name": self.name,
             "color": self.color
         }
-        loc = Category_Doc.query.join(Category_To_Category, Category_To_Category.parent_id==Category_Doc.id).filter_by(child_id=self.id).first()
+        loc = Category_Doc.query.join(Category_To_Category_Doc, Category_To_Category_Doc.parent_id==Category_Doc.id).filter_by(child_id=self.id).first()
         json_dict["parent_category"] = {}
         if loc:
             json_dict["parent_category"] = loc.to_json()
