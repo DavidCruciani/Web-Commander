@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<script src="{{ url_for('static',filename='js/prism.js') }}" data-manual></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/prism.css') }}">
+
+{{ super() }}
+{% endblock %}
+
+{% block content %}
+
+<div>
+    
+    <div id="searchbox">
+        <input type="text" id="search-text" placeholder="@my doc...#my command" autofocus>
+        <button id="scan" @click="search_term">Search</button>
+    </div>
+    <div style="margin: 0 auto 0 auto; max-width: 600px; color: #747474;">
+        Use '@' to search a doc and '#' to search a command
+    </div>
+
+    <!-- <hr> -->
+
+    <template v-if="'commands' in display_list">
+        <hr>
+        <h3>Commands</h3>
+        <div v-for="command in display_list.commands">
+            <div class="command-card" style="font-size: larger;">
+                <!-- <hr> -->
+                <div class="d-flex">
+                    <h4>
+                        [[command.title]]
+                    </h4>
+                    <div style="position: absolute; right: 0; margin-right: 8px;">
+                        <a :href="'/command/category/'+command.category_id" title="See command in category">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </div>
+                </div>
+                <i>[[command.description]]</i>
+                <pre class="line-numbers"><code :class="'language-'+command.lang">[[command.text]]</code></pre>
+            </div>
+        </div>
+    </template>
+    <template v-if="'docs' in display_list">
+        <hr>
+        <h3>Docs</h3>
+        <div v-for="doc in display_list.docs">
+            <div class="col-auto m-1 d-flex">
+                <div class="card" style="min-width: 200px;">
+                    <div class="card-body">
+                        <div>
+                            <a :href="'/documentation/view/'+doc.id" style="text-decoration: none; color: black;">
+                                <h5 class="card-title">[[doc.title]]</h5>
+                            </a>
+                            <!-- <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6> -->
+                            <p class="card-text" v-if="doc.description">[[doc.description]]</p>
+                            <p class="card-text" v-else><i>No description</i></p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script type="module">
+    // Empty vue used for toast to declar vue is used in the rest of the project
+    const {createApp, ref, nextTick} = Vue
+    import {message_list} from '/static/js/toaster.js'
+    createApp({
+        delimiters: ['[[', ']]'],
+        setup() {
+            const display_list = ref([])
+
+            async function search_term() {
+                display_list.value = []
+                let loc_search_result = $("#search-text").val()
+                let url = "/search"
+                let title = ""
+                
+                if(!loc_search_result){
+
+                }else if(loc_search_result.startsWith("@")){
+                    url += "/doc"
+                    title = loc_search_result.substring(1)
+                }else if(loc_search_result.startsWith("#")){
+                    url += "/command"
+                    title = loc_search_result.substring(1)
+                }else{
+                    url += "/all"
+                    title = loc_search_result
+                }
+
+                const res = await fetch(url, {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": $("#csrf_token").val(), "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            "title": title
+                        })
+                    });
+                if(await res.status==200 ){
+                    let loc = await res.json()
+                    display_list.value = loc["results"]
+                    await nextTick()
+                    Prism.highlightAll()
+                }                
+            }
+
+            $(document).ready(function() {
+                $('#search-text').on('keypress',function(e) {
+                    if(e.which == 13) {
+                        search_term();
+                    }
+                });
+            })
+
+            return {
+                message_list,
+                display_list,
+
+                search_term
+            }
+        }
+    }).mount('.container-fluid')
+</script>
+{% endblock %}

@@ -35,10 +35,12 @@ def create_app():
     from .account.account import account_blueprint
     from .command_part.command import command_blueprint
     from .documentation_part.documentation import documentation_blueprint
+    from .searching.search import search_blueprint
     app.register_blueprint(home_blueprint, url_prefix="/")
     app.register_blueprint(account_blueprint, url_prefix="/account")
     app.register_blueprint(command_blueprint, url_prefix="/command")
     app.register_blueprint(documentation_blueprint, url_prefix="/documentation")
+    app.register_blueprint(search_blueprint, url_prefix="/search")
 
     return app
     
