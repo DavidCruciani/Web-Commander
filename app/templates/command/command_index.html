@@ -9,10 +9,16 @@
     <h1>Command</h1>
     <hr>
 
-    
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-category">
-        New cat
-    </button>
+    <div class="d-flex">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-category">
+            New category
+        </button>
+        <!-- Search bar -->
+        <div class="input-group w-auto translate-middle-x" style="left: 40%">
+            <input autocomplete="off" @input="onInput" type="search" class="form-control rounded" placeholder='Search category by name' style="min-width: 400px;" />
+        </div>
+        <!-- Search bar -->
+    </div>
      
     
     <!-- Modal Add Category -->
@@ -53,7 +59,6 @@
 
 
     <ul class="list-group col-6">
-        <!-- <li class="list-group-item col-6" v-for="category in categories_list" :style="'background-color:'+category.color">[[category.name]]</li> -->
         <a class="list-group-item list-group-item-action col-6" v-for="category in categories_list"
          :href="'/command/category/'+category.id">
             [[category.name]]
@@ -74,6 +79,7 @@
         setup() {
 
             const categories_list = ref([])
+            let loc_cat_list = []
 
             async function fetch_categories() {
                 const res = await fetch("/command/root_categories")
@@ -82,6 +88,7 @@
                 }else{
                     let loc = await res.json()
                     categories_list.value = loc["categories"]
+                    loc_cat_list = categories_list.value
                 }
             }
 
@@ -104,8 +111,20 @@
                     });
                     if(await res.status==200){
                         await fetch_categories()
+                        $("#add-category").modal("hide")
                     }
                     display_toast(res)
+                }
+            }
+
+            async function onInput(e) {
+                categories_list.value = []
+                if(e.target.value){
+                    categories_list.value = loc_cat_list.filter((cat) => {
+                        return cat.name.toLowerCase().includes(e.target.value.toLowerCase())
+                    })
+                }else{
+                    categories_list.value = loc_cat_list
                 }
             }
 
@@ -118,7 +137,8 @@
                 message_list,
                 categories_list,
 
-                add_new_cat
+                add_new_cat,
+                onInput
             }
         }
     }).mount('.container-fluid')

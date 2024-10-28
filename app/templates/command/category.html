@@ -178,8 +178,10 @@
                 <pre class="line-numbers"><code :class="'language-'+command.lang">[[command.text]]</code></pre>
             </div>
 
-            <edit_command :command="command" @command_edited="(msg) => command = msg"></edit_command>
+            <edit_command :command="command" @command_edited="(msg) => update_command(msg, command)"></edit_command>
         </template>
+        <br>
+        <br>
     </div>
   
 
@@ -194,7 +196,7 @@
     //     }
     // });
     // Empty vue used for toast to declar vue is used in the rest of the project
-    const {createApp, ref, onMounted, onUpdated, nextTick} = Vue
+    const {createApp, ref, onMounted, nextTick} = Vue
     import {message_list, display_toast, create_message} from '/static/js/toaster.js'
     import create_command from '/static/js/command/create_command.js'
     import edit_command from '/static/js/command/edit_command.js'
@@ -323,14 +325,20 @@
                 Prism.highlightAll()
             }
 
+            async function update_command(msg, command){
+                for(let i in active_category.value.commands){
+                    if(active_category.value.commands[i].id == command.id){
+                        active_category.value.commands[i] = msg
+                    }
+                }
+                await nextTick()
+                Prism.highlightAll()
+            }
+
 
             onMounted(() => {
                 fetch_current_category()
             })
-
-            // onUpdated(() => {
-            //     Prism.highlightAll()
-            // })
 
             return {
                 message_list,
@@ -342,7 +350,8 @@
                 delete_cat,
                 get_new_command,
                 delete_command,
-                onInput
+                onInput,
+                update_command
             }
         }
     }).mount('.container-fluid')

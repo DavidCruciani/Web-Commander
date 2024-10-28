@@ -1,5 +1,6 @@
 from .db_class.db import *
-from . import db 
+from . import db
+from sqlalchemy import desc
 
 
 ##########
@@ -8,9 +9,9 @@ from . import db
 
 def get_categories(is_doc):
     if is_doc:
-        return Category_Doc.query.all()
+        return Category_Doc.query.order_by(Category_Doc.name).all()
     else:
-        return Category.query.all()
+        return Category.query.order_by(Category.name).all()
 
 def get_category(cid, is_doc):
     if is_doc:
