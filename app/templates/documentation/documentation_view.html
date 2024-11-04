@@ -13,8 +13,10 @@
 
 <script src="{{ url_for('static',filename='js/markdown-it.js') }}"></script>
 <script src="{{ url_for('static',filename='js/easymde.min.js') }}"></script>
-
 <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/easymde.min.css') }}">
+
+<script src="{{ url_for('static',filename='js/prism.js') }}" data-manual></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/prism.css') }}">
 {{super()}}
 {% endblock %}
 
@@ -149,7 +151,21 @@
         },
         setup() {
 
-            const md = window.markdownit()
+            // const md = window.markdownit()
+            const md = window.markdownit({
+                highlight(str, lang) {
+                    let hl;
+
+                    try {
+                        hl = Prism.highlight(str, Prism.languages[lang]);
+                    } catch (error) {
+                        console.error(error);
+                        hl = md.utils.escapeHtml(str);
+                    }
+
+                    return `<pre class="language-${lang}"><code class="language-${lang}">${hl}</code></pre>`;
+                },
+                })
             const current_doc = ref()
             const selected_tab = ref("main")
             const edit_mode = ref(false)
